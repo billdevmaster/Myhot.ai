@@ -1,0 +1,31 @@
+version: '2'
+
+volumes:
+  dbdata:
+
+networks:
+  backend:
+
+services:
+  app:
+    image: ghcr.io/agnaistic/agnaistic:latest
+    restart: always
+    ports:
+      - '3001:3001'
+    environment:
+      - DB_HOST=mongo
+      - DB_PORT=27017
+      - DB_NAME=agnai
+      - INITIAL_USER=admin
+      - INITIAL_PASSWORD=password
+      - JWT_SECRET=self-hosting
+    networks: 
+      - backend
+    
+  mongo:
+    image: mongo:6
+    restart: always
+    volumes:
+      - dbdata:/data/db
+    networks:
+      - backend
