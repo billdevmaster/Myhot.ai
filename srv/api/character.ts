@@ -42,16 +42,13 @@ const characterValidator = {
   insert: 'string?',
   creator: 'string?',
   characterVersion: 'string?',
+  originalAvatar: 'string?'
 } as const
 
 const newCharacterValidator = {
   ...characterValidator,
   name: 'string',
-  scenario: 'string',
-  greeting: 'string',
-  sampleChat: 'string',
   persona: 'string',
-  originalAvatar: 'string?',
 } as const
 
 const personaValidator = {
@@ -62,8 +59,10 @@ const personaValidator = {
 const createCharacter = handle(async (req) => {
   const body = handleForm(req, newCharacterValidator)
   const persona = JSON.parse(body.persona) as AppSchema.Persona
+  const greeting = body.greeting ? body.greeting : ""
+  const sampleChat = body.sampleChat ? body.sampleChat : ""
+  const scenario = body.scenario ? body.scenario : ""
   assertValid(personaValidator, persona)
-
   const sprite = body.sprite ? JSON.parse(body.sprite) : undefined
   const voice = parseAndValidateVoice(body.voice)
   const tags = toArray(body.tags)
@@ -90,12 +89,12 @@ const createCharacter = handle(async (req) => {
   const char = await store.characters.createCharacter(req.user?.userId!, {
     name: body.name,
     persona,
-    sampleChat: body.sampleChat,
+    sampleChat: sampleChat,
     description: body.description,
     appearance: body.appearance,
     culture: body.culture,
-    scenario: body.scenario,
-    greeting: body.greeting,
+    scenario: scenario,
+    greeting: greeting,
     visualType: body.visualType,
     sprite,
     avatar: body.originalAvatar,
