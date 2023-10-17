@@ -58,7 +58,6 @@ async function initDb() {
   }
 
   const db = await connect()
-  console.log("db", db)
   if (db) {
     await createIndexes()
     await setupDomain()

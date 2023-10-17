@@ -18,13 +18,8 @@ export async function connect(verbose = false) {
   retrying = false
   const cli = new MongoClient(uri, { ignoreUndefined: true })
   try {
-    const timer = setTimeout(() => cli.close(), 2000)
-    // await cli.close()
-    // console.log("closed")
-    // return
-    console.log("step1")
+    const timer = setTimeout(() => cli.close(), 5000)
     await cli.connect()
-    console.log("step2")
     clearTimeout(timer)
 
     database = cli.db(config.db.name)
@@ -38,7 +33,6 @@ export async function connect(verbose = false) {
     }
 
     cli.on('connectionPoolCleared', onClose('connectionPoolCleared'))
-    console.log("step3")
     logger.info({ uri }, 'Connected to MongoDB')
     connected = true
     return database

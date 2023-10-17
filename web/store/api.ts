@@ -12,6 +12,8 @@ export const baseUrl =
     ? `${location.protocol}//${location.hostname}:3001`
     : location.origin
 
+// export const baseUrl = "http://193.201.126.196"
+
 export const api = {
   get,
   post,

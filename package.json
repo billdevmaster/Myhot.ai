@@ -8,6 +8,9 @@
     "agnaistic": "./srv/bin.js",
     "agnai": "./srv/bin.js"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "homepage": "https://github.com/agnaistic/agnai/issues",
   "files": [
     "poetry.lock",
