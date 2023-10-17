@@ -363,6 +363,7 @@ const ExternalLink: Component<{ href: string; newtab?: boolean; children?: any }
     class="flex h-10 items-center justify-start gap-4 rounded-xl px-2 hover:bg-[var(--bg-700)] sm:h-12"
     href={props.href}
     target={props.newtab ? '_blank' : ''}
+    rel='noreferrer'
   >
     {props.children}
   </a>

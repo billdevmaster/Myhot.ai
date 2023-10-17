@@ -53,7 +53,7 @@ const OpenRouterOauth: Component = () => {
       <Show when={!isKeySet()}>
         <TitleCard>
           Click <b class="highlight">Login with OpenRouter</b> or visit{' '}
-          <a class="link" target="_blank" href="https://openrouter.ai/keys">
+          <a class="link" target="_blank" href="https://openrouter.ai/keys" rel='noreferrer'>
             OpenRouter.ai/keys
           </a>{' '}
           to create an API key and enter it below.

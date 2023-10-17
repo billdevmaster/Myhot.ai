@@ -55,6 +55,7 @@ export const BooksTab: Component = (props) => {
               href="https://github.com/agnaistic/agnai/blob/dev/instructions/memory.md"
               target="_blank"
               class="link"
+              rel='noreferrer'
             >
               Memory Book Guide
             </a>

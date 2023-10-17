@@ -607,7 +607,7 @@ const GenSettings: Component<Props & { pane: boolean; format?: ThirdPartyFormat;
           helperText={
             <>
               Classifier Free Guidance. See{' '}
-              <a href="https://docs.novelai.net/text/cfg.html" target="_blank" class="link">
+              <a href="https://docs.novelai.net/text/cfg.html" target="_blank" class="link" rel='noreferrer'>
                 NovelAI's CFG docs
               </a>{' '}
               for more information.
@@ -632,7 +632,7 @@ const GenSettings: Component<Props & { pane: boolean; format?: ThirdPartyFormat;
             <>
               A prompt that would generate the opposite of what you want. Leave empty if unsure.
               Classifier Free Guidance. See{' '}
-              <a href="https://docs.novelai.net/text/cfg.html" target="_blank" class="link">
+              <a href="https://docs.novelai.net/text/cfg.html" target="_blank" class="link" rel='noreferrer'>
                 NovelAI's CFG docs
               </a>{' '}
               for more information.

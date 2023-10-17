@@ -240,7 +240,7 @@ const HordeGuide: Component<{ close: () => void }> = (props) => (
     <div class="flex flex-col gap-2">
       <SolidCard bg="hl-900">
         <b>Important!</b> For reliable responses, ensure you have registered at{' '}
-        <a href="https://aihorde.net/register" class="link" target="_blank">
+        <a href="https://aihorde.net/register" class="link" target="_blank" rel='noreferrer'>
           AI Horde
         </a>
         . Once you have your key, add it to your{' '}
@@ -278,7 +278,7 @@ const OpenAIGuide: Component<{ close: () => void }> = (props) => (
 
       <Card>
         Firstly, you will need to{' '}
-        <A class="link" href="https://auth0.openai.com/u/signup" target="_blank">
+        <A class="link" href="https://auth0.openai.com/u/signup" target="_blank" rel='noreferrer'>
           Register an account OpenAI
         </A>
         .
@@ -286,7 +286,7 @@ const OpenAIGuide: Component<{ close: () => void }> = (props) => (
 
       <Card>
         Once registered, you will need to{' '}
-        <A class="link" href="https://platform.openai.com/account/api-keys" target="_blank">
+        <A class="link" href="https://platform.openai.com/account/api-keys" target="_blank" rel='noreferrer'>
           generate an API key.
         </A>
       </Card>

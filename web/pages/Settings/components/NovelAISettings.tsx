@@ -40,6 +40,7 @@ const NovelAISettings: Component = () => {
               class="link"
               target="_blank"
               href="https://github.com/agnaistic/agnai/blob/dev/instructions/novel.md"
+              rel='noreferrer'
             >
               Instructions
             </a>
