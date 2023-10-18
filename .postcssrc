@@ -1,5 +1,7 @@
 {
   "plugins": {
-    "tailwindcss": {}
+    "tailwindcss": {
+      "purge": ["./web/**/*.{html,tsx}"]
+    }
   }
 }
