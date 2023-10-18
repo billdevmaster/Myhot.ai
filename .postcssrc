@@ -1,5 +1,7 @@
 {
   "plugins": {
-    "tailwindcss": {}
+    "tailwindcss": {
+      "content": "['./web/**/*.{html,tsx}']"
+    }
   }
 }
