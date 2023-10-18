@@ -53,11 +53,11 @@ import Tabs, { useTabs } from '/web/shared/Tabs'
 import RangeInput from '/web/shared/RangeInput'
 
 const options = [
-  { id: 'wpp', label: 'W++' },
+  // { id: 'wpp', label: 'W++' },
   { id: 'boostyle', label: 'Boostyle' },
-  { id: 'sbf', label: 'SBF' },
-  { id: 'attributes', label: 'Attributes' },
-  { id: 'text', label: 'Plain Text' },
+  // { id: 'sbf', label: 'SBF' },
+  // { id: 'attributes', label: 'Attributes' },
+  // { id: 'text', label: 'Plain Text' },
 ]
 
 export const CreateCharacterForm: Component<{

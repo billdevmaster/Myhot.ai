@@ -127,19 +127,19 @@ const ChatOptions: Component<{
           <User /> Character
         </Option>
 
-        <Option onClick={() => props.togglePane('participants')} hide={!isOwner()}>
+        {/* <Option onClick={() => props.togglePane('participants')} hide={!isOwner()}>
           <Users /> Participants
-        </Option>
+        </Option> */}
 
         <Row>
           <Item onClick={() => props.togglePane('chat-settings')} hide={!isOwner()}>
             <Settings /> Edit Chat
           </Item>
-          <Item onClick={() => props.togglePane('preset')} hide={!isOwner()}>
+          {/* <Item onClick={() => props.togglePane('preset')} hide={!isOwner()}>
             <Sliders /> Preset
-          </Item>
+          </Item> */}
         </Row>
-        <Row>
+        {/* <Row>
           <Item onClick={screenshotChat}>
             <Camera />
             <Show when={!chats.opts.screenshot}>Screenshot</Show>
@@ -150,9 +150,9 @@ const ChatOptions: Component<{
           <Item onClick={() => props.togglePane('memory')} hide={!isOwner()}>
             <Book /> Memory
           </Item>
-        </Row>
+        </Row> */}
 
-        <Row>
+        {/* <Row>
           <Item
             schema={cfg.anonymize ? 'primary' : undefined}
             onClick={settingStore.toggleAnonymize}
@@ -162,16 +162,16 @@ const ChatOptions: Component<{
           <Item onClick={() => props.togglePane('ui')}>
             <Palette /> UI
           </Item>
-        </Row>
+        </Row> */}
 
-        <Row>
+        {/* <Row>
           <Item onClick={() => props.setModal('export')}>
             <Download /> Export
           </Item>
           <Item onClick={() => props.setModal('delete')} hide={!isOwner()}>
             <Trash /> Delete
           </Item>
-        </Row>
+        </Row> */}
 
         <Show when={chats.chat}>
           <Row>
