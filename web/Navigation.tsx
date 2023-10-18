@@ -176,88 +176,6 @@ const UserNavigation: Component = () => {
       <CharacterLink />
 
       <ChatLink />
-
-      <Library pipeline={user.user?.useLocalPipeline} />
-
-      <Item href="/invites">
-        <MailPlus /> Invites <InviteBadge />
-      </Item>
-
-      <MultiItem>
-        <Item href="/presets">
-          <Sliders /> Presets
-        </Item>
-        <EndItem>
-          <A class="icon-button" href="/presets/new">
-            <Plus />
-          </A>
-        </EndItem>
-      </MultiItem>
-
-      <Show when={user.user?.admin}>
-        <Item href="/admin/metrics">
-          <Activity /> Manage
-        </Item>
-        <SubMenu>
-          <SubItem href="/admin/users" parent="/admin/">
-            Users
-          </SubItem>
-          <SubItem href="/admin/subscriptions" parent="/admin/">
-            Subscriptions
-          </SubItem>
-          <SubItem href="/admin/announcements" parent="/admin/">
-            Announcements
-          </SubItem>
-        </SubMenu>
-      </Show>
-
-      <div class="flex flex-wrap justify-center gap-[2px] text-sm">
-        <Item href="/faq">
-          <HelpCircle />
-        </Item>
-
-        <Show when={menu.config.patreon}>
-          <ExternalLink href="https://patreon.com/Agnaistic" newtab>
-            <HeartHandshake />
-          </ExternalLink>
-        </Show>
-        <Item href="/settings">
-          <Settings />
-        </Item>
-
-        <Item
-          onClick={() => {
-            userStore.saveUI({ mode: user.ui.mode === 'light' ? 'dark' : 'light' })
-          }}
-        >
-          <Show when={user.ui.mode === 'dark'} fallback={<Sun />}>
-            <Moon />
-          </Show>
-        </Item>
-
-        <Item
-          onClick={() => {
-            if (menu.showMenu) settingStore.closeMenu()
-            toastStore.modal(true)
-          }}
-        >
-          <Switch>
-            <Match when={toasts.unseen > 0}>
-              <div class="relative flex">
-                <Bell fill="var(--bg-100)" />
-                <span class="absolute bottom-[-0.5rem] right-[-0.5rem]">
-                  <Badge>{toasts.unseen > 9 ? '9+' : toasts.unseen}</Badge>
-                </span>
-              </div>
-            </Match>
-
-            <Match when={!toasts.unseen}>
-              <Bell color="var(--bg-500)" />
-            </Match>
-          </Switch>
-        </Item>
-      </div>
-
       <Slots />
     </>
   )
@@ -296,67 +214,8 @@ const GuestNavigation: Component = () => {
 
         <ChatLink />
 
-        <Library />
-
-        <MultiItem>
-          <Item href="/presets">
-            <Sliders /> Presets
-          </Item>
-          <EndItem>
-            <A class="icon-button" href="/presets/new">
-              <Plus />
-            </A>
-          </EndItem>
-        </MultiItem>
+        
       </Show>
-
-      <div class="flex flex-wrap justify-center gap-[2px] text-sm">
-        <Item href="/faq">
-          <HelpCircle />
-        </Item>
-
-        <Show when={menu.config.patreon}>
-          <ExternalLink href="https://patreon.com/Agnaistic" newtab>
-            <HeartHandshake />
-          </ExternalLink>
-        </Show>
-
-        <Item href="/settings">
-          <Settings />
-        </Item>
-
-        <Item
-          onClick={() => {
-            userStore.saveUI({ mode: user.ui.mode === 'light' ? 'dark' : 'light' })
-          }}
-        >
-          <Show when={user.ui.mode === 'dark'} fallback={<Sun />}>
-            <Moon />
-          </Show>
-        </Item>
-
-        <Item
-          onClick={() => {
-            if (menu.showMenu) settingStore.closeMenu()
-            toastStore.modal(true)
-          }}
-        >
-          <Switch>
-            <Match when={toasts.unseen > 0}>
-              <div class="relative flex">
-                <Bell fill="var(--bg-100)" />
-                <span class="absolute bottom-[-0.5rem] right-[-0.5rem]">
-                  <Badge>{toasts.unseen > 9 ? '9+' : toasts.unseen}</Badge>
-                </span>
-              </div>
-            </Match>
-
-            <Match when={!toasts.unseen}>
-              <Bell color="var(--bg-500)" />
-            </Match>
-          </Switch>
-        </Item>
-      </div>
 
       <Slots />
     </>
