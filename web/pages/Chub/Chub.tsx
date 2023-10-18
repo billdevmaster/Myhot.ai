@@ -75,7 +75,7 @@ const Chub: Component = () => {
         <sub>
           <em>
             Disclaimer: Characters are owned and managed by{' '}
-            <a class="link" href="https://chub.ai" target="_blank" rel='noreferrer'>
+            <a class="link" href="https://chub.ai" target="_blank">
               CHUB.ai
             </a>
             .

@@ -87,7 +87,7 @@ const HordeAISettings: Component<{
       <br />
       <span>
         Leave blank to use guest account. Visit{' '}
-        <a class="link" href="https://aihorde.net" target="_blank" rel='noreferrer'>
+        <a class="link" href="https://aihorde.net" target="_blank">
           stablehorde.net
         </a>{' '}
         to register.

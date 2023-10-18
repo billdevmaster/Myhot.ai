@@ -161,7 +161,7 @@ const AISettings: Component<{
               <Match when={each.name === 'replicate'}>
                 <TitleCard>
                   Head to{' '}
-                  <a class="link" target="_blank" href="https://replicate.com/" rel='noreferrer'>
+                  <a class="link" target="_blank" href="https://replicate.com/">
                     Replicate.com
                   </a>{' '}
                   to get started.
