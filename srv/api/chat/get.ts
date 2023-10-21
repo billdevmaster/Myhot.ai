@@ -64,7 +64,7 @@ export const getChat = handle(async (req) => {
   const userId = req.body.userId
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
-  const character: any = await getMysqlQueryResult(`SELECT * from ai where ID=${charId}`)
+  const character: any = await getMysqlQueryResult(`SELECT * from AI where ID=${charId}`)
   if (!user || !character) {
     return {success: false}
   }
