@@ -13,6 +13,7 @@ import { stripe } from '../api/billing/stripe'
 import { getTier } from './subscriptions'
 import { domain } from '../domains'
 import { store } from '.'
+import { getMysqlQueryResult } from './client'
 
 export type NewUser = {
   username: string
@@ -43,6 +44,17 @@ export async function getMetrics() {
   return { totalUsers }
 }
 
+export async function getMysqlProfile(userId: string) {
+  const user: any = await getMysqlQueryResult(`select * from users where ID=${userId}`)
+  const ret: AppSchema.Profile = {
+    "_id": "",
+    "userId": userId,
+    "handle": `${user[0].Fname} ${user[0].Lname}`,
+    "kind": "profile"
+}
+  return ret
+}
+
 export async function getProfile(userId: string) {
   const profile = await db('profile').findOne({ userId })
   return profile
@@ -51,6 +63,60 @@ export async function getProfile(userId: string) {
 export async function getUser(userId: string) {
   const user = await db('user').findOne({ _id: userId, kind: 'user' }, { projection: { hash: 0 } })
   return user
+}
+
+export async function getMysqluser(userId: string) {
+  const user: any = await getMysqlQueryResult(`select * from users where ID=${userId}`)
+  // return { _id: userId, name: `${user[0].Fname} ${user[0].Lname}` }
+  const ret: AppSchema.User = {
+    _id: userId,
+    kind: 'user',
+    username: `${user[0].Fname} ${user[0].Lname}`,
+    hash: '',
+    admin: false,
+    novelApiKey: '',
+    defaultAdapter: 'horde',
+    koboldUrl: '',
+    thirdPartyFormat: 'kobold',
+    thirdPartyPassword: '',
+    novelModel: 'euterpe-v2',
+    oobaUrl: '',
+    hordeModel: 'any',
+    hordeKey: '',
+    oaiKey: '',
+    defaultPresets: {},
+    useLocalPipeline: false,
+    ui: {
+      "theme": "sky",
+      "themeBg": "truegray",
+      "bgCustomGradient": "",
+      "mode": "dark",
+      "avatarSize": "md",
+      "avatarCorners": "circle",
+      "font": "default",
+      "msgOpacity": 0.8,
+      "mobileSendOnEnter": false,
+      "chatWidth": "full",
+      "chatAvatarMode": true,
+      "logPromptsToBrowserConsole": false,
+      "imageWrap": false,
+      "light": {
+        "msgBackground": "--bg-800",
+        "botBackground": "--bg-800",
+        "chatTextColor": "--text-800",
+        "chatEmphasisColor": "--text-600",
+        "chatQuoteColor": "--text-800"
+      },
+      "dark": {
+        "msgBackground": "--bg-800",
+        "botBackground": "--bg-800",
+        "chatTextColor": "--text-800",
+        "chatEmphasisColor": "--text-600",
+        "chatQuoteColor": "--text-800"
+      }
+    }
+  }
+  return ret
 }
 
 export async function updateUserUI(userId: string, props: Partial<AppSchema.User['ui']>) {
@@ -123,6 +189,7 @@ export async function createUser(newUser: NewUser, admin?: boolean) {
     const nextChar: AppSchema.Character = {
       _id: v4(),
       kind: 'character',
+      characterId: '',
       userId: user._id,
       favorite: false,
       visualType: 'avatar',
@@ -158,6 +225,18 @@ export async function createAccessToken(username: string, user: AppSchema.User) 
   return token
 }
 
+export async function createFEAccessToken(username: string, userId: any) {
+  const payload: any = {
+    userId,
+    username,
+  }
+
+  const token = jwt.sign(payload, config.jwtSecret, {
+    expiresIn: config.jwtExpiry,
+  })
+  return token
+}
+
 export async function createRemoteAccessToken(username: string, user: AppSchema.User) {
   const payload: Omit<AppSchema.Token, 'iat' | 'exp'> = {
     userId: user._id,
@@ -183,6 +262,23 @@ export async function getProfiles(ownerId: string, userIds: string[]) {
     .find({ kind: 'profile', userId: { $in: userIds.concat(ownerId) } })
     .toArray()
   return list
+}
+
+export async function getMysqlProfiles(ownerId: string, userIds: string[]) {
+  try {
+    const list: any = await getMysqlQueryResult(`SELECT * from users where ID=${parseInt(ownerId)}`)
+    if (list.length > 0) {
+      const ret = {
+        handle: `${list[0].Fname} ${list[0].Lname}`,
+        kind: "profile",
+        userId: list[0].id.toString(),
+      }
+      return [ret]
+    }
+  } catch (ex) {
+    console.log(ex)
+    return [];
+  }
 }
 
 function getKey() {

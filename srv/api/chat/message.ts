@@ -117,22 +117,19 @@ export const generateMessageV2 = handle(async (req, res) => {
   const requestId = v4()
   const chatId = params.id
   assertValid(genValidator, body)
-
   if (!userId) {
     return handleGuestGenerate(body, req, res)
   }
-
   const impersonate: AppSchema.Character | undefined = body.impersonate
-  const user = await store.users.getUser(userId)
+  const user = await store.users.getMysqluser(userId)
   body.user = user
 
   const chat = await store.chats.getChatOnly(chatId)
   if (!chat) throw errors.NotFound
-
   if (body.kind === 'request' && chat.userId !== userId) {
     throw errors.Forbidden
   }
-
+  
   // Coalesce for backwards compatibly while new UI rolls out
   const replyAs = body.replyAs._id.startsWith('temp-')
     ? body.replyAs
@@ -142,13 +139,12 @@ export const generateMessageV2 = handle(async (req, res) => {
     const isAllowed = await store.chats.canViewChat(userId, chat)
     if (!isAllowed) throw errors.Forbidden
   }
-
   const members = chat.memberIds.concat(chat.userId)
 
   if (body.kind === 'retry' && userId !== chat.userId) {
     throw errors.Forbidden
   }
-
+  
   if (body.kind === 'continue' && userId !== chat.userId) {
     throw errors.Forbidden
   }
@@ -157,7 +153,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   let userMsg: AppSchema.ChatMessage | undefined
   if (body.kind === 'send' || body.kind === 'ooc') {
     await ensureBotMembership(chat, members, impersonate)
-
+    
     userMsg = await store.msgs.createChatMessage({
       chatId,
       message: body.text!,
@@ -191,7 +187,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   if (body.kind === 'ooc' || !replyAs) {
     return { success: true }
   }
-
+  console.log(body.user)
   /**
    * For group chats we won't worry about lock integrity.
    * We still need to create the user message and broadcast it,
@@ -217,7 +213,6 @@ export const generateMessageV2 = handle(async (req, res) => {
     characterId: replyAs._id,
   })
   res.json({ requestId, success: true, generating: true, message: 'Generating message' })
-
   const { stream, adapter, ...entities } = await createTextStreamV2(
     { ...body, chat, replyAs, impersonate, requestId },
     log

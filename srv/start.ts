@@ -7,7 +7,7 @@ import { initMessageBus } from './api/ws'
 import { server } from './app'
 import { config } from './config'
 import { store } from './db'
-import { connect, createIndexes } from './db/client'
+import { connect, createIndexes, mysqlConnect } from './db/client'
 import { logger } from './logger'
 import { setupDomain } from './domains'
 const pkg = require('../package.json')
@@ -58,6 +58,7 @@ async function initDb() {
   }
 
   const db = await connect()
+  await mysqlConnect()
   if (db) {
     await createIndexes()
     await setupDomain()

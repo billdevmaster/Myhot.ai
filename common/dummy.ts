@@ -10,6 +10,7 @@ export function toChar(
   return {
     _id: name,
     kind: 'character',
+    characterId: '',
     createdAt: '',
     scenario: 'SCENARIO',
     greeting: 'GREETING',

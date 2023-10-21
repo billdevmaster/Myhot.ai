@@ -173,14 +173,15 @@ const ChatDetail: Component = () => {
   const tts = createMemo(() => (user.user?.texttospeech?.enabled ?? true) && !!chats.char?.voice)
 
   const isSelfRemoved = createMemo(() => {
-    if (!user.profile) return false
-    if (!chats.chat) return false
+    // if (!user.profile) return false
+    // if (!chats.chat) return false
+    // console.log(chats.chat.userId)
+    // console.log(user.profile.userId)
+    // const isMember =
+    //   chats.chat.userId === user.profile.userId ||
+    //   chats.members.some((mem) => mem.userId === user.profile?.userId)
 
-    const isMember =
-      chats.chat.userId === user.profile.userId ||
-      chats.members.some((mem) => mem.userId === user.profile?.userId)
-
-    return !isMember
+    return false
   })
 
   const waitingMsg = createMemo(() => {
@@ -257,7 +258,6 @@ const ChatDetail: Component = () => {
   createEffect(() => {
     const charName = chats.char?.name
     updateTitle(charName ? `Chat with ${charName}` : 'Chat')
-
     if (!params.id) {
       if (!chats.lastId) return nav('/character/list')
       return nav(`/chat/${chats.lastId}`)

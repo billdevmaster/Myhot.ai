@@ -35,6 +35,7 @@ export function decryptText(text: string) {
 
 export const STARTER_CHARACTER: AppSchema.Character = {
   _id: '',
+  characterId: '',
   userId: '',
   kind: 'character',
   createdAt: '',

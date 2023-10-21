@@ -6,6 +6,7 @@ import { now } from './util'
 export type CharacterUpdate = Partial<
   Pick<
     AppSchema.Character,
+    
     | 'name'
     | 'avatar'
     | 'persona'
@@ -35,6 +36,7 @@ export async function createCharacter(
   userId: string,
   char: Pick<
     AppSchema.Character,
+    | 'characterId'
     | 'name'
     | 'appearance'
     | 'avatar'
@@ -67,7 +69,7 @@ export async function createCharacter(
     updatedAt: now(),
     ...char,
   }
-
+  console.log(newChar)
   await db('character').insertOne(newChar)
   return newChar
 }
@@ -85,7 +87,14 @@ export async function getCharacter(
   userId: string,
   id: string
 ): Promise<AppSchema.Character | undefined> {
-  const char = await db('character').findOne({ _id: id, userId })
+  const char = await db('character').findOne({ _id: id })
+  return char || undefined
+}
+
+export async function getCharacterByCharId(
+  id: string
+): Promise<AppSchema.Character | undefined> {
+  const char = await db('character').findOne({ characterId: id })
   return char || undefined
 }
 
@@ -143,5 +152,6 @@ export async function getCharacterList(charIds: string[], userId?: string) {
     .find({ _id: { $in: charIds } })
     .project(project)
     .toArray()
+  list[0].avatar = "https://myhot.ai/uploads/adminPics/" + list[0].avatar
   return list
 }

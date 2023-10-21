@@ -108,6 +108,7 @@ const createCharacter = handle(async (req) => {
     creator: body.creator,
     characterVersion: body.characterVersion,
     insert: insert,
+    characterId: ""
   })
 
   const filename = await entityUpload(

@@ -57,7 +57,7 @@ const FLAG_KEY = 'agnai-flags'
 const initState: SettingState = {
   anonymize: false,
   guestAccessAllowed: canUseStorage(),
-  initLoading: true,
+  initLoading: false,
   cfg: { loading: false, ttl: 0 },
   showMenu: false,
   showImpersonate: false,

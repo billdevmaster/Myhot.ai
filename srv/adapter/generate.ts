@@ -180,10 +180,13 @@ export async function createTextStreamV2(
    * Everything else should be update to date at this point
    */
   if (!guestSocketId) {
+    console.log("step1", opts.sender)
     const entities = await getResponseEntities(opts.chat, opts.sender.userId, opts.settings)
+    console.log("step2")
     entities.gen.temporary = opts.settings?.temporary
-
+    
     const { adapter, model } = getAdapter(opts.chat, entities.user, entities.gen)
+    console.log("step3")
     const encoder = getTokenCounter(adapter, model)
     opts.parts = getPromptParts(
       {
@@ -218,7 +221,7 @@ export async function createTextStreamV2(
   if (!opts.settings) {
     opts.settings = {}
   }
-
+  
   if (opts.settings.stopSequences) {
     opts.settings.stopSequences = opts.settings.stopSequences
       .map((stop) => stop.replace(/\\n/g, '\n'))
@@ -230,7 +233,7 @@ export async function createTextStreamV2(
       .map(({ seq, bias }) => ({ seq: seq.replace(/\\n/g, '\n'), bias }))
       .filter((pb) => !!pb.seq)
   }
-
+  
   const subscription = await getSubscriptionPreset(opts.user, !!guestSocketId, opts.settings)
   const { adapter, isThirdParty, model } = getAdapter(opts.chat, opts.user, opts.settings)
   const encoder = getTokenCounter(adapter, model)
@@ -302,7 +305,7 @@ export async function getResponseEntities(
     throw errors.Forbidden
   }
 
-  const user = await store.users.getUser(chat.userId)
+  const user = await store.users.getMysqluser(chat.userId)
   if (!user) {
     throw errors.Forbidden
   }

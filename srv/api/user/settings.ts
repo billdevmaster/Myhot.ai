@@ -27,7 +27,7 @@ export const getInitialLoad = handle(async ({ userId }) => {
   }
 
   const [profile, user, presets, books, scenarios] = await Promise.all([
-    store.users.getProfile(userId!),
+    store.users.getMysqlProfile(userId!),
     getSafeUserConfig(userId!),
     store.presets.getUserPresets(userId!),
     store.memory.getBooks(userId!),
@@ -391,7 +391,7 @@ async function verifyHordeKey(key: string) {
 }
 
 export async function getSafeUserConfig(userId: string) {
-  const user = await store.users.getUser(userId!)
+  const user = await store.users.getMysqluser(userId!)
   if (!user) return
 
   if (user.novelApiKey) {

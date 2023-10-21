@@ -28,8 +28,13 @@ export async function getChat(id: string) {
   const characters = await db('character')
     .find({ _id: { $in: charIds.concat(chat.characterId) } })
     .toArray()
-
+  characters[0].avatar = "https://myhot.ai/uploads/adminPics/" + characters[0].avatar
   return { chat, characters }
+}
+
+export async function getChatByUserAndChar(userId: string, charId: string) {
+  const chat = await db('chat').findOne({ userId, characterId: charId })
+  return chat
 }
 
 export async function listByCharacter(userId: string, characterId: string) {
@@ -182,7 +187,7 @@ export async function getAllChats(userId: string) {
       },
     ])
     .toArray()
-
+    list[0].avatar = "https://myhot.ai/uploads/adminPics/" + list[0].avatar
   return list
 }
 

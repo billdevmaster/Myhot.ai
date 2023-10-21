@@ -1,13 +1,23 @@
 import { Db, MongoClient } from 'mongodb'
+import mysql, {Connection} from 'mysql'
+import util from 'util'
 import { config } from '../config'
 import { logger } from '../logger'
 import { AllDoc, Doc } from '../../common/types/schema'
 
 const uri = config.db.uri || `mongodb://${config.db.host}:${config.db.port}`
+const mysqlConf = {
+  host: config.mysqlDB.host,
+  user: config.mysqlDB.user,
+  password: config.mysqlDB.password,
+  database: config.mysqlDB.database,
+  acquireTimeout: 10000000000
+}
 let connected = false
 let retrying = false
 
 let database: Db | null = null
+let mysqlDB: Connection | null = null
 
 export async function connect(verbose = false) {
   
@@ -46,9 +56,42 @@ export async function connect(verbose = false) {
   }
 }
 
+export async function mysqlConnect() {
+  try {
+    const connection = mysql.createConnection(mysqlConf);
+    connection.connect(function(err: any) {
+      if (err) {
+        console.log("error when connecting to db:", err);
+        setTimeout(mysqlConnect, 2000);
+      }else{
+        console.log("connection is successfull");
+      }
+    });
+    connection.on("error", function(err: any) {
+      console.log("db error", err);
+      if (err.code === "PROTOCOL_CONNECTION_LOST") {
+        mysqlConnect();
+      } else {
+        throw err;
+      }
+    });
+    
+    mysqlDB = connection
+    
+    return mysqlDB
+  } catch (ex) {
+    console.log("mysql connect error", ex);
+  }
+}
+
 export function getDb() {
   if (!database) throw new Error('Database not yet initialised')
   return database!
+}
+
+export function getMysqlDb() {
+  if (!mysqlDB) throw new Error('MySQL Database not yet initialised')
+  return mysqlDB!
 }
 
 export function db<T extends AllDoc['kind']>(kind: T) {
@@ -79,3 +122,13 @@ export async function createIndexes() {
   await db('chat-tree').createIndex({ chatId: 1 }, { name: 'chat-trees_chatId' })
   await db('prompt-template').createIndex({ userId: 1 }, { name: 'prompt-templates_userId' })
 }
+
+export async function getMysqlQueryResult(queryStr: string) {
+  if (mysqlDB) {
+    const query = util.promisify(mysqlDB.query).bind(mysqlDB)
+    return await query(queryStr)
+  } else {
+    return null
+  }
+}
+

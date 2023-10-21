@@ -7,12 +7,12 @@ export function setSocketId(id: string) {
   socketId = id
 }
 
-// export const baseUrl =
-//   location.port === '1234' || location.port === '3001'
-//     ? `${location.protocol}//${location.hostname}:3001`
-//     : location.origin
+export const baseUrl =
+  location.port === '1234' || location.port === '3001'
+    ? `${location.protocol}//${location.hostname}:3001`
+    : location.origin
 
-export const baseUrl = "https://myhot-api.onrender.com"
+// export const baseUrl = "https://myhot-api.onrender.com"
 
 export const api = {
   get,

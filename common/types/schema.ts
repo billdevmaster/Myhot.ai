@@ -318,6 +318,7 @@ export namespace AppSchema {
 
   export interface Character extends BaseCharacter {
     kind: 'character'
+    characterId: string
     userId: string
 
     culture?: string

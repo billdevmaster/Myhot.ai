@@ -77,6 +77,12 @@ export const config = {
     uri: env('DB_URI', ''),
     verbose: !!env('DB_VERBOSE', ''),
   },
+  mysqlDB: {
+    host: env('MYSQL_DB_HOST', '127.0.0.1'),
+    user: env('MYSQL_DB_USER', 'root'),
+    password: env('MYSQL_DB_PWD', 'root'),
+    database: env('MYSQL_DB_DATABASE', 'root'),
+  },
   redis: {
     host: env('REDIS_HOST', '127.0.0.1'),
     port: +env('REDIS_PORT', '6379'),
