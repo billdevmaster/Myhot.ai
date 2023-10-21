@@ -45,6 +45,7 @@ import { eventStore } from '/web/store/event'
 import Slot from '/web/shared/Slot'
 import ChatPanes from './components/ChatPanes'
 import { useAppContext } from '/web/store/context'
+import AvatarIcon from '/web/shared/AvatarIcon'
 
 const ChatDetail: Component = () => {
   const { updateTitle } = setComponentPageTitle('Chat')
@@ -63,7 +64,7 @@ const ChatDetail: Component = () => {
     impersonate: s.impersonating,
     ready: s.characters.loaded > 0,
   }))
-
+  
   const isPaneOrPopup = usePane()
   const slots = useResizeObserver()
 
@@ -408,23 +409,21 @@ const ChatDetail: Component = () => {
               class={`hidden h-9 items-center justify-between rounded-md sm:flex`}
               style={headerBg()}
             >
-              <A
-                class="ellipsis flex max-w-full cursor-pointer flex-row items-center justify-between gap-4 text-lg font-bold"
-                href={isOwner() ? `/character/${chats.char?._id}/chats` : `/chats`}
-              >
-                <ChevronLeft />
+              <div class="flex items-center">
+                <div class="mr-2">
+                  <AvatarIcon
+                    format={{ corners: 'circle', size: 'md' }}
+                    avatarUrl={chats.char?.avatar!}
+                  />
+                </div>
                 <div class="ellipsis flex flex-col">
-                  <span class="overflow-hidden text-ellipsis whitespace-nowrap leading-5">
+                  <span class="overflow-hidden whitespace-nowrap leading-5 text-xl font-bold">
                     {chats.char?.name}
                   </span>
-
-                  <span class="flex-row items-center gap-4 overflow-hidden text-ellipsis whitespace-nowrap text-sm">
-                    {chats.chat?.name || ''}
-                  </span>
                 </div>
-              </A>
+              </div>
 
-              <div class="flex flex-row gap-3">
+              {/* <div class="flex flex-row gap-3">
                 <div class="hidden items-center text-xs italic text-[var(--text-500)] sm:flex">
                   {isOwner() ? adapterLabel() : ''}
                 </div>
@@ -459,7 +458,7 @@ const ChatDetail: Component = () => {
                     <ArrowDownLeft />
                   </div>
                 </Show>
-              </div>
+              </div> */}
             </header>
 
             <section
