@@ -422,7 +422,6 @@ export const msgStore = createStore<MsgState>(
           toastStore.error(`Speech synthesis not supported on this browser`)
           return
         }
-
         try {
           await playVoiceFromBrowser(voice, text, culture ?? defaultCulture, messageId)
         } catch (e: any) {
@@ -584,7 +583,7 @@ async function playVoiceFromBrowser(
   if (!user || user?.texttospeech?.enabled === false) return
   const filterAction = user.texttospeech?.filterActions ?? true
   const audio = await createSpeech({ voice, text, culture, filterAction })
-
+  console.log(audio)
   audio.addEventListener('error', (e) => {
     toastStore.error(`Error playing web speech: ${e.message}`)
     msgStore.setState({ speaking: undefined })

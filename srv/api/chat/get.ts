@@ -85,7 +85,13 @@ export const getChat = handle(async (req) => {
     // sprite: "",
     avatar: character[0].image,
     favorite: false,
-    voice: undefined,
+    voice: {
+      service : "elevenlabs",
+      voiceId : "21m00Tcm4TlvDq8ikWAM",
+      model : "eleven_monolingual_v1",
+      stability : 0.75,
+      similarityBoost : 0.75
+    },
     tags: undefined,
     alternateGreetings: undefined,
     characterBook: undefined,

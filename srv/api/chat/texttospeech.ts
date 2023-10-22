@@ -15,7 +15,7 @@ export const textToSpeech = handle(async ({ body, userId, socketId, log, params 
     },
     body
   )
-  const user = userId ? await store.users.getUser(userId) : body.user
+  const user = userId ? await store.users.getMysqluser(userId) : body.user
 
   const guestId = userId ? undefined : socketId
   await generateVoice(

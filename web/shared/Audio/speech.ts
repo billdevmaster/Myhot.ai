@@ -27,7 +27,6 @@ export async function createSpeech(opts: SpeechOpts) {
 
   speechSynthesis.cancel()
   const speech = await createNativeSpeech(opts.voice, opts.text, opts.culture, opts.filterAction)
-
   currentAudio = new AudioReference({ speech })
   return currentAudio
 }

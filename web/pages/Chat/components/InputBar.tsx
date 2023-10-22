@@ -158,7 +158,6 @@ const InputBar: Component<{
     if (!lastTextMsg.characterId) return
     const char = ctx.allBots[lastTextMsg.characterId]
     if (!char?.voice) return
-
     msgStore.textToSpeech(
       lastTextMsg._id,
       lastTextMsg.msg,

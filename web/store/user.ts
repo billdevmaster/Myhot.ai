@@ -75,11 +75,11 @@ export const userStore = createStore<UserState>(
     /**
      * While introducing persisted UI settings, we'll automatically persist settings that the user has in local storage
      */
-    if (!init.user.ui) {
-      userStore.saveUI(defaultUIsettings)
-    } else {
-      userStore.receiveUI(init.user.ui)
-    }
+    // if (!init.user.ui) {
+    //   userStore.saveUI(defaultUIsettings)
+    // } else {
+    //   userStore.receiveUI(init.user.ui)
+    // }
   })
 
   storage.getItem(BACKGROUND_KEY).then((bg) => {

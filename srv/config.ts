@@ -135,6 +135,7 @@ export const config = {
   },
   pipelineProxy: !!env('PIPELINE_PROXY', ''),
   publicTunnel: !!env('PUBLIC_TUNNEL', ''),
+  elevenKey: env('ELEVEN_LABS_API_KEY', '')
 }
 
 insertInject()

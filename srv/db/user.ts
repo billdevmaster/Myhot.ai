@@ -7,7 +7,7 @@ import { config } from '../config'
 import { NOVEL_MODELS } from '../../common/adapters'
 import { logger } from '../logger'
 import { errors, StatusError } from '../api/wrap'
-import { encryptPassword, now } from './util'
+import { encryptPassword, encryptText, now } from './util'
 import { defaultChars } from '/common/characters'
 import { stripe } from '../api/billing/stripe'
 import { getTier } from './subscriptions'
@@ -86,35 +86,16 @@ export async function getMysqluser(userId: string) {
     oaiKey: '',
     defaultPresets: {},
     useLocalPipeline: false,
-    ui: {
-      "theme": "sky",
-      "themeBg": "truegray",
-      "bgCustomGradient": "",
-      "mode": "dark",
-      "avatarSize": "md",
-      "avatarCorners": "circle",
-      "font": "default",
-      "msgOpacity": 0.8,
-      "mobileSendOnEnter": false,
-      "chatWidth": "full",
-      "chatAvatarMode": true,
-      "logPromptsToBrowserConsole": false,
-      "imageWrap": false,
-      "light": {
-        "msgBackground": "--bg-800",
-        "botBackground": "--bg-800",
-        "chatTextColor": "--text-800",
-        "chatEmphasisColor": "--text-600",
-        "chatQuoteColor": "--text-800"
-      },
-      "dark": {
-        "msgBackground": "--bg-800",
-        "botBackground": "--bg-800",
-        "chatTextColor": "--text-800",
-        "chatEmphasisColor": "--text-600",
-        "chatQuoteColor": "--text-800"
-      }
-    }
+    speechtotext : {
+      enabled : true,
+      autoSubmit : true,
+      autoRecord : true
+    },
+    texttospeech : {
+      enabled : true,
+      filterActions : true
+    },
+    elevenLabsApiKey: encryptText(config.elevenKey)
   }
   return ret
 }

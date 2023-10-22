@@ -87,7 +87,6 @@ export async function generateVoice(
   let output: string = ''
   let error: any
   const text = processText(opts.text, user.texttospeech?.filterActions ?? true)
-
   log.debug({ text, service: voice.service }, 'Text to speech')
 
   const generatingMessage = { chatId, messageId, type: 'voice-generating' }
