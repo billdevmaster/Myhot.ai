@@ -72,6 +72,7 @@ const InputBar: Component<{
   const [menu, setMenu] = createSignal(false)
   const [cleared, setCleared] = createSignal(0, { equals: false })
   const [complete, setComplete] = createSignal(false)
+  const [listening, setListening] = createSignal(false)
 
   const completeOpts = createMemo(() => {
     const list = ctx.activeBots.map((char) => ({ label: char.name, value: char._id }))
@@ -158,6 +159,7 @@ const InputBar: Component<{
     if (!lastTextMsg.characterId) return
     const char = ctx.allBots[lastTextMsg.characterId]
     if (!char?.voice) return
+
     msgStore.textToSpeech(
       lastTextMsg._id,
       lastTextMsg.msg,
@@ -322,12 +324,13 @@ const InputBar: Component<{
         </div>
       </DropMenu>
       <Switch>
-        <Match when={text() === ''}>
+        <Match when={text() === '' || listening()}>
           <SpeechRecognitionRecorder
             culture={props.char?.culture}
             onText={(value) => setText(value)}
             onSubmit={() => send()}
             cleared={cleared}
+            listening={setListening}
           />
         </Match>
 
