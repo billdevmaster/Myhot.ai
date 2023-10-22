@@ -14,6 +14,7 @@ import Button from '../../../shared/Button'
 import { defaultCulture } from '../../../shared/CultureCodes'
 import { msgStore, toastStore, userStore } from '../../../store'
 import { AppSchema } from '../../../../common/types/schema'
+import { createDebounce } from '/web/shared/util'
 
 const win: any = window
 
@@ -52,19 +53,33 @@ export const SpeechRecognitionRecorder: Component<{
   onText: (value: string) => void
   onSubmit: () => void
   cleared: Accessor<number>
+  listening: (state: boolean) => void
 }> = (props) => {
   const settings = userStore((s) => ({ ...defaultSettings, ...s.user?.speechtotext }))
 
-  const [finalValue, setFinalValue] = createSignal('')
-  const [interimValue, setInterimValue] = createSignal('')
+  const [scripts, setScripts] = createSignal<string[]>([])
   const [isListening, setIsListening] = createSignal(false)
   const [isHearing, setIsHearing] = createSignal(false)
   const [speechRecognition, setSpeechRecognition] = createSignal<SpeechRecognition>()
   const [pendingRecord, setPendingRecord] = createSignal(false)
 
-  onMount(() => {
+  createEffect(() => {
+    const next = isListening()
+    props.listening(next)
+  })
+
+  const [complete] = createDebounce((speech: SpeechRecognition, text: string) => {
+    const transcript = capitalize(text)
+    speech.abort()
+    props.onText(transcript)
+    setPendingRecord(settings.autoRecord)
+    props.onSubmit()
+  }, 1500)
+
+  onMount(async () => {
     let speech: SpeechRecognition
     try {
+      // await window.navigator.mediaDevices.getUserMedia({ video: false, audio: true })
       const Speech = getSpeechRecognition()
       if (!Speech) return
       speech = new Speech()
@@ -79,34 +94,34 @@ export const SpeechRecognitionRecorder: Component<{
 
     speech.addEventListener('result', (event) => {
       const speechEvent = event as SpeechRecognitionEvent
-      let interimTranscript = ''
 
-      for (let i = speechEvent.resultIndex; i < speechEvent.results.length; ++i) {
-        const transcript = speechEvent.results[i][0].transcript
-
-        if (speechEvent.results[i].isFinal) {
-          let interim = capitalizeInterim(transcript)
-          if (interim != '') {
-            let final = finalValue()
-            final = composeValues(final, interim) + '.'
-            setFinalValue(final)
-            speech.abort()
-            setIsListening(false)
-          }
-          interimTranscript = ' '
-        } else {
-          interimTranscript += transcript
+      const script = extractTranscript(speechEvent)
+      setScripts(script.texts.map(capitalize))
+      let foo: string[] = []
+      let finals = 0
+      for (const res of speechEvent.results) {
+        if (res.isFinal) finals++
+        for (const item of res) {
+          foo.push(item.transcript)
         }
       }
 
-      setInterimValue(capitalizeInterim(interimTranscript))
+      for (let i = speechEvent.resultIndex; i < speechEvent.results.length; ++i) {
+        const result = speechEvent.results[i]
+        const transcript = capitalize(result[0].transcript)
+        props.onText(transcript)
+
+        if (result.isFinal && transcript !== '' && settings.autoSubmit) {
+          complete(speech, transcript)
+        }
+      }
     })
 
-    speech.addEventListener('error', () => {
+    speech.addEventListener('error', (_err) => {
       setIsListening(false)
     })
 
-    speech.addEventListener('end', () => {
+    speech.addEventListener('end', (_reason) => {
       setIsListening(false)
     })
 
@@ -114,8 +129,12 @@ export const SpeechRecognitionRecorder: Component<{
       setIsHearing(true)
     })
 
-    speech.addEventListener('speechend', () => {
+    speech.addEventListener('speechend', (_event) => {
       setIsHearing(false)
+      // let value = composedValue()
+      // if (!value) return
+
+      // props.onText(value)
     })
 
     setSpeechRecognition(speech)
@@ -126,14 +145,15 @@ export const SpeechRecognitionRecorder: Component<{
     setIsListening(false)
   })
 
-  const composeValues = (previous: string, interim: string) => {
-    let spacing = ''
-    if (previous.endsWith('.')) spacing = ' '
-    return previous + spacing + interim
-  }
+  // const composeValues = (previous: string, interim: string) => {
+  //   let spacing = ''
+  //   if (previous.endsWith('.')) spacing = ' '
+  //   return previous + spacing + interim
+  // }
 
   const composedValue = createMemo(() => {
-    return composeValues(finalValue(), interimValue())
+    let value = scripts().join('. ')
+    return value
   })
 
   createEffect(
@@ -144,10 +164,10 @@ export const SpeechRecognitionRecorder: Component<{
         if (!speech) return
         const listens = isListening()
         if (listens) {
+          console.log('clear effect')
           speech.abort()
         }
-        setFinalValue('')
-        setInterimValue('')
+        setScripts([])
         if (listens) {
           setTimeout(() => {
             if (isListening()) return
@@ -165,19 +185,9 @@ export const SpeechRecognitionRecorder: Component<{
     props.onText(value)
   })
 
-  createEffect(() => {
-    const final = finalValue()
-    if (!final) return
-    if (settings.autoSubmit) {
-      setPendingRecord(settings.autoRecord)
-      setTimeout(() => {
-        props.onSubmit()
-      }, 100)
-    }
-  })
-
   const unsub = msgStore.subscribe((state) => {
     if (state.speaking && isListening()) {
+      console.log('msgstore sub')
       setPendingRecord(true)
       speechRecognition()?.abort()
       setIsListening(false)
@@ -212,6 +222,7 @@ export const SpeechRecognitionRecorder: Component<{
     const speech = speechRecognition()
     setPendingRecord(false)
     if (!speech) return
+    props.listening(true)
     if (listening) {
       speech.abort()
       setIsListening(false)
@@ -219,19 +230,6 @@ export const SpeechRecognitionRecorder: Component<{
       speech.start()
       setIsListening(true)
     }
-  }
-
-  function capitalizeInterim(interimTranscript: string) {
-    let capitalizeIndex = -1
-    if (interimTranscript.length > 2 && interimTranscript[0] === ' ') capitalizeIndex = 1
-    else if (interimTranscript.length > 1) capitalizeIndex = 0
-    if (capitalizeIndex > -1) {
-      const spacing = capitalizeIndex > 0 ? ' '.repeat(capitalizeIndex - 1) : ''
-      const capitalized = interimTranscript[capitalizeIndex].toLocaleUpperCase()
-      const rest = interimTranscript.substring(capitalizeIndex + 1)
-      interimTranscript = spacing + capitalized + rest
-    }
-    return interimTranscript
   }
 
   return (
@@ -252,4 +250,34 @@ export const SpeechRecognitionRecorder: Component<{
       </Show>
     </>
   )
+}
+
+function extractTranscript(ev: SpeechRecognitionEvent) {
+  const results = Array.from(ev.results)
+  const texts: string[] = []
+  for (const result of results) {
+    const text = result[0].transcript
+    if (!text) continue
+    texts.push(text)
+  }
+
+  let transcript = texts.map(capitalize).join('. ')
+  if (transcript.length && !transcript.endsWith('.')) {
+    transcript += '.'
+  }
+
+  return { texts, transcript }
+}
+
+function capitalize(text: string) {
+  let capitalizeIndex = -1
+  if (text.length > 2 && text[0] === ' ') capitalizeIndex = 1
+  else if (text.length > 1) capitalizeIndex = 0
+  if (capitalizeIndex > -1) {
+    const spacing = capitalizeIndex > 0 ? ' '.repeat(capitalizeIndex - 1) : ''
+    const capitalized = text[capitalizeIndex].toLocaleUpperCase()
+    const rest = text.substring(capitalizeIndex + 1)
+    text = spacing + capitalized + rest
+  }
+  return text
 }
