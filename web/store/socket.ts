@@ -16,7 +16,7 @@ createSocket()
 
 function createSocket() {
   const socketUrl = baseUrl.replace('https://', 'wss://').replace('http://', 'ws://')
-  const ws = new WebSocket("wss://142.93.5.214:3000/")
+  const ws = new WebSocket(socketUrl)
 
   socket = ws
   ws.onopen = onConnected
