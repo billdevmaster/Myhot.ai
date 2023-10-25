@@ -15,8 +15,8 @@ const Pending = () => {
       const res = await api.post('/chat/getChat', { userId: params.userid, charId: params.charid });
       if (res.result.success) {
         setAuth(res.result.token)
-        await settingStore.init()
-        nav(`/chat/${res.result.chat._id}`)
+        // await settingStore.init()
+        window.location.href = `/chat/${res.result.chat._id}`
       }
     }
     getChat();
