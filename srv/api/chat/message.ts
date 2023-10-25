@@ -187,7 +187,6 @@ export const generateMessageV2 = handle(async (req, res) => {
   if (body.kind === 'ooc' || !replyAs) {
     return { success: true }
   }
-  console.log(body.user)
   /**
    * For group chats we won't worry about lock integrity.
    * We still need to create the user message and broadcast it,

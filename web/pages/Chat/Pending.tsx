@@ -14,8 +14,8 @@ const Pending = () => {
     const getChat = async () => {
       const res = await api.post('/chat/getChat', { userId: params.userid, charId: params.charid });
       if (res.result.success) {
-        settingStore.init()
         setAuth(res.result.token)
+        await settingStore.init()
         nav(`/chat/${res.result.chat._id}`)
       }
     }

@@ -180,13 +180,10 @@ export async function createTextStreamV2(
    * Everything else should be update to date at this point
    */
   if (!guestSocketId) {
-    console.log("step1", opts.sender)
     const entities = await getResponseEntities(opts.chat, opts.sender.userId, opts.settings)
-    console.log("step2")
     entities.gen.temporary = opts.settings?.temporary
     
     const { adapter, model } = getAdapter(opts.chat, entities.user, entities.gen)
-    console.log("step3")
     const encoder = getTokenCounter(adapter, model)
     opts.parts = getPromptParts(
       {

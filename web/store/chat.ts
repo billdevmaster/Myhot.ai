@@ -227,7 +227,7 @@ export const chatStore = createStore<ChatState>('chat', {
       const res = await chatsApi.getChat(id)
 
       yield { loaded: true }
-
+      if (!res) return
       if (res.error) toastStore.error(`Failed to retrieve conversation: ${res.error}`)
       if (res.result) {
         // pipelineApi.chatEmbed(res.result.chat, res.result.messages)

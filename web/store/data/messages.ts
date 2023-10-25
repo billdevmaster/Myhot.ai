@@ -620,6 +620,7 @@ export async function getPromptEntities(): Promise<PromptEntities> {
   }
 
   const entities = await getGuestEntities()
+  console.log(entities?.profile)
   if (!entities) throw new Error(`Could not collate data for prompting`)
   return {
     ...entities,
