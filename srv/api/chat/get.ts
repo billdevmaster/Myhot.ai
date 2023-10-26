@@ -134,7 +134,7 @@ export const getChat = handle(async (req) => {
     }
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
-    if (oldchar.voiceSample != character[0].voice_sample) {
+    if (!oldchar.voiceSample || oldchar.voiceSample != character[0].voice_sample) {
       const response = await axios.get(testAudioUrl, { responseType: 'blob' });
       const audioBuffer: any = response.data;
       var file = new Blob([audioBuffer], { type: 'audio/mp3' });
