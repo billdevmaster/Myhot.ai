@@ -4,6 +4,8 @@ import { getMysqlQueryResult } from '/srv/db/client'
 import { errors, handle } from '../wrap'
 import { unserialize } from 'php-serialize'
 import { createFEAccessToken } from '/srv/db/user'
+import axios from 'axios'
+import fs from 'fs/promises'
 
 export const getCharacterChats = handle(async (req) => {
   const character = await store.characters.getCharacter(req.userId!, req.params.id)
@@ -71,6 +73,10 @@ export const getChat = handle(async (req) => {
   const moodsencoded = Buffer.from(character[0].moods, 'base64')
   const moods = unserialize(moodsencoded.toString())
   // copy character to my db
+
+  // uploading mp3 file and get voice id from elevenlab
+
+
   const characterInfo: any = {
     characterId: character[0].ID,
     name: character[0].fullName,
@@ -106,6 +112,8 @@ export const getChat = handle(async (req) => {
   if (!oldchar) {
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
+    // upload voice file to elevenlab
+
     char = await store.characters.updateCharacter(oldchar._id, "all", characterInfo)
   }
   // create or get chat with userId and character ID

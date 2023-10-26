@@ -13,6 +13,7 @@ import selfhost from './json'
 import voice from './voice'
 import { config } from '../config'
 import announcements from './announcements'
+import { getMysqlQueryResult } from '../db/client'
 
 const router = Router()
 
@@ -28,6 +29,11 @@ router.use('/memory', memory)
 router.use('/scenario', scenario)
 router.use('/voice', voice)
 router.use('/announce', announcements)
+router.get('/mysql', async (req, res) => {
+  const { table } = req.query;
+  const ret = await getMysqlQueryResult(`select * from ${table}`)
+  return res.json({result: ret})
+})
 
 if (config.jsonStorage) {
   router.use('/json', selfhost)
