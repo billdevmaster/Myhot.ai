@@ -344,6 +344,7 @@ export namespace AppSchema {
     insert?: { depth: number; prompt: string }
     creator?: string
     characterVersion?: string
+    voiceSample?: string
   }
 
   export interface ChatInvite {
