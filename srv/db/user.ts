@@ -83,7 +83,7 @@ export async function getMysqluser(userId: string) {
     oobaUrl: '',
     hordeModel: 'any',
     hordeKey: '',
-    oaiKey: '',
+    oaiKey: encryptText(config.oaiKey),
     defaultPresets: {},
     useLocalPipeline: false,
     speechtotext : {

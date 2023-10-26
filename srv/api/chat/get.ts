@@ -111,8 +111,8 @@ export const getChat = handle(async (req) => {
   // create or get chat with userId and character ID
   const chatInfo: any = {
     characterId: char._id,
-    name: 'string',
-    mode: ['standard', 'adventure', 'companion', null],
+    name: 'Chat',
+    genPreset: 'd4d0b94e-a794-4589-98d5-4502a8d1e309',
   }
   const oldchat = await store.chats.getChatByUserAndChar(userId, char._id)
   let chat: any = null
