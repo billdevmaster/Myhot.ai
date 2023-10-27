@@ -64,6 +64,8 @@ function getCharacterIds(chats: Document[]) {
 }
 
 export const getChat = handle(async (req) => {
+  // const testAudioUrl = "https://od.lk/d/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
+  // test
   const userId = req.body.userId
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
@@ -113,15 +115,13 @@ export const getChat = handle(async (req) => {
   if (!oldchar) {
     // upload voice file to elevenlab
     if (character[0].voice_sample) {
-      const response = await axios.get(testAudioUrl, { responseType: 'blob' });
+      const response: any = await axios.get(testAudioUrl, { responseType: 'arraybuffer' });
       const audioBuffer: any = response.data;
-      var file = new Blob([audioBuffer], { type: 'audio/mp3' });
-      // Create a FormData object and append the audio file
-      // const files = [];
-      // files.push(file)
+      var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
       const formData = new FormData();
       formData.append('name', 'sample')
-      formData.append('files[]', file);
+      formData.append('files', file, 'sample.mp3');
+      
       const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
         headers: {
           'Xi-Api-Key': config.elevenKey,
@@ -135,15 +135,13 @@ export const getChat = handle(async (req) => {
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
     if (!oldchar.voiceSample || oldchar.voiceSample != character[0].voice_sample) {
-      const response = await axios.get(testAudioUrl, { responseType: 'blob' });
+      const response: any = await axios.get(testAudioUrl, { responseType: 'arraybuffer' });
       const audioBuffer: any = response.data;
-      var file = new Blob([audioBuffer], { type: 'audio/mp3' });
-      // Create a FormData object and append the audio file
-      // const files = [];
-      // files.push(file)
+      var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
       const formData = new FormData();
       formData.append('name', 'sample')
-      formData.append('files[]', file);
+      formData.append('files', file, 'sample.mp3');
+      
       const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
         headers: {
           'Xi-Api-Key': config.elevenKey,
