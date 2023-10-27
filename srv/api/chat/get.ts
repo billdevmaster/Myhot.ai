@@ -64,8 +64,6 @@ function getCharacterIds(chats: Document[]) {
 }
 
 export const getChat = handle(async (req) => {
-  // const testAudioUrl = "https://od.lk/d/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
-  // test
   const userId = req.body.userId
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
@@ -81,7 +79,8 @@ export const getChat = handle(async (req) => {
   // copy character to my db
 
   // uploading mp3 file and get voice id from elevenlab
-  const testAudioUrl = "https://od.lk/d/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
+  // const testAudioUrl = "https://od.lk/d/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
+  const testAudioUrl = "https://myhot.ai/uploads/audio/" + character[0].voice_sample
 
   const characterInfo: any = {
     characterId: character[0].ID,
@@ -137,26 +136,28 @@ export const getChat = handle(async (req) => {
     }
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
-    if (!oldchar.voiceSample || oldchar.voiceSample != character[0].voice_sample) {
-      const response: any = await axios.get(testAudioUrl, { responseType: 'arraybuffer' });
-      const audioBuffer: any = response.data;
-      var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
-      const formData = new FormData();
-      formData.append('name', 'sample')
-      formData.append('files', file, 'sample.mp3');
-
-      const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
-        headers: {
-          'Xi-Api-Key': config.elevenKey,
-          'Content-Type': 'multipart/form-data'
-        },
-      })
+    if (character[0].voice_sample) {
+      if (oldchar.voiceSample != character[0].voice_sample) {
+        const response: any = await axios.get(testAudioUrl, { responseType: 'arraybuffer' });
+        const audioBuffer: any = response.data;
+        var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
+        const formData = new FormData();
+        formData.append('name', 'sample')
+        formData.append('files', file, 'sample.mp3');
   
-      characterInfo.voice.voiceId = ret.data.voice_id
-      characterInfo.voiceSample = character[0].voice_sample
-    } else {
-      characterInfo.voice.voiceId = oldchar.voice.voiceId
-      characterInfo.voiceSample = oldchar.voiceSample
+        const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
+          headers: {
+            'Xi-Api-Key': config.elevenKey,
+            'Content-Type': 'multipart/form-data'
+          },
+        })
+    
+        characterInfo.voice.voiceId = ret.data.voice_id
+        characterInfo.voiceSample = character[0].voice_sample
+      } else {
+        characterInfo.voice.voiceId = oldchar.voice.voiceId
+        characterInfo.voiceSample = oldchar.voiceSample
+      }
     }
     // create or get chat with userId and character ID
     char = await store.characters.updateCharacter(oldchar._id, "all", characterInfo)
