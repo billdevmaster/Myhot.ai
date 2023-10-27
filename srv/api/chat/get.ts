@@ -73,8 +73,11 @@ export const getChat = handle(async (req) => {
   if (!user || !character) {
     return {success: false}
   }
-  const moodsencoded = Buffer.from(character[0].moods, 'base64')
-  const moods = unserialize(moodsencoded.toString())
+  let moods = "";
+  if (character[0].moods.length > 0) {
+    const moodsencoded = Buffer.from(character[0].moods, 'base64')
+    moods = unserialize(moodsencoded.toString())
+  }
   // copy character to my db
 
   // uploading mp3 file and get voice id from elevenlab
@@ -141,7 +144,7 @@ export const getChat = handle(async (req) => {
       const formData = new FormData();
       formData.append('name', 'sample')
       formData.append('files', file, 'sample.mp3');
-      
+
       const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
         headers: {
           'Xi-Api-Key': config.elevenKey,
