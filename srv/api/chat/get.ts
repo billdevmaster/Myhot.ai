@@ -113,7 +113,7 @@ export const getChat = handle(async (req) => {
     characterVersion: undefined,
     insert: undefined,
   }
-  const oldchar = await store.characters.getCharacterByCharId(character[0].ID)
+  const oldchar: any = await store.characters.getCharacterByCharId(character[0].ID)
   let char: any = null
   if (!oldchar) {
     // upload voice file to elevenlab
@@ -154,6 +154,9 @@ export const getChat = handle(async (req) => {
   
       characterInfo.voice.voiceId = ret.data.voice_id
       characterInfo.voiceSample = character[0].voice_sample
+    } else {
+      characterInfo.voice.voiceId = oldchar.voice.voiceId
+      characterInfo.voiceSample = oldchar.voiceSample
     }
     // create or get chat with userId and character ID
     char = await store.characters.updateCharacter(oldchar._id, "all", characterInfo)
