@@ -76,7 +76,7 @@ export const getChat = handle(async (req) => {
   // copy character to my db
 
   // uploading mp3 file and get voice id from elevenlab
-  const testAudioUrl = "https://storage.googleapis.com/eleven-public-prod/premade/voices/21m00Tcm4TlvDq8ikWAM/df6788f9-5c96-470d-8312-aab3b3d8f50a.mp3"
+  const testAudioUrl = "https://od.lk/s/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
 
   const characterInfo: any = {
     characterId: character[0].ID,
