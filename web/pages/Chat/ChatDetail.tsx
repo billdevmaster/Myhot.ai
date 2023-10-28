@@ -510,12 +510,12 @@ const ChatDetail: Component = () => {
                   ref={monitorScroll}
                 >
                   <div id="chat-messages" class="flex w-full flex-col gap-2">
-                    <Show when={chats.loaded && chatMsgs().length < 2 && chats.char?.description}>
+                    {/* <Show when={chats.loaded && chatMsgs().length < 2 && chats.char?.description}>
                       <div class="mb-4 flex flex-col items-center text-[var(--text-500)]">
                         <div class="font-bold">Notes from the creator of {chats.char?.name}</div>
                         {descriptionText()}
                       </div>
-                    </Show>
+                    </Show> */}
                     <Show when={chats.loaded && chatMsgs().length === 0 && !msgs.waiting}>
                       <div class="flex justify-center">
                         <Button onClick={generateFirst}>Generate Message</Button>
