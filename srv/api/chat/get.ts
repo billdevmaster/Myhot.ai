@@ -101,7 +101,8 @@ export const getChat = handle(async (req) => {
       voiceId : "21m00Tcm4TlvDq8ikWAM",
       model : "eleven_monolingual_v1",
       stability : 0.75,
-      similarityBoost : 0.75
+      similarityBoost: 0.75,
+      rate: character[0].rate ? character[0].rate : 1
     },
     tags: undefined,
     alternateGreetings: undefined,

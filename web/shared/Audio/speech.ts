@@ -2,6 +2,7 @@ import { getAssetUrl } from '../util'
 import { AudioReference } from './AudioReference'
 import { AppSchema } from '/common/types'
 import { VoiceWebSynthesisSettings } from '/common/types'
+import { chatStore } from '/web/store/chat'
 
 let currentAudio: AudioReference | undefined = undefined
 let voicesReady = false
@@ -19,14 +20,18 @@ type SpeechOpts =
   | { voice: VoiceWebSynthesisSettings; text: string; culture: string; filterAction: boolean }
 
 export async function createSpeech(opts: SpeechOpts) {
+  const voice: any = chatStore.getState().active?.char?.voice
   if ('url' in opts) {
     currentAudio?.pause()
-    currentAudio = new AudioReference({ audio: new Audio(getAssetUrl(opts.url)) })
+    const audio = new Audio(getAssetUrl(opts.url));
+    audio.playbackRate = voice.rate ? voice.rate : 1
+    currentAudio = new AudioReference({ audio})
     return currentAudio
   }
 
   speechSynthesis.cancel()
   const speech = await createNativeSpeech(opts.voice, opts.text, opts.culture, opts.filterAction)
+  
   currentAudio = new AudioReference({ speech })
   return currentAudio
 }
@@ -75,6 +80,7 @@ export async function createNativeSpeech(
   speech.lang = culture
   speech.pitch = voice.pitch || 1
   speech.rate = 10
+  
   return speech
 }
 
