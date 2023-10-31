@@ -74,7 +74,7 @@ export async function createNativeSpeech(
   speech.voice = syntheticVoice
   speech.lang = culture
   speech.pitch = voice.pitch || 1
-  speech.rate = voice.rate || 1
+  speech.rate = 10
   return speech
 }
 
