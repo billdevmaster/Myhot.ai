@@ -72,7 +72,7 @@ export async function getMysqluser(userId: string) {
     _id: userId,
     kind: 'user',
     username: `${user[0].Fname} ${user[0].Lname}`,
-    hash: '',
+    hash: encryptText(config.novelaiKey),
     admin: false,
     novelApiKey: '',
     defaultAdapter: 'horde',

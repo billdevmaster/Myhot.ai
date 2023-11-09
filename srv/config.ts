@@ -137,6 +137,7 @@ export const config = {
   publicTunnel: !!env('PUBLIC_TUNNEL', ''),
   elevenKey: env('ELEVEN_LABS_API_KEY', ''),
   oaiKey: env('OPENAI_KEY', ''),
+  novelaiKey: env('NOVELAI_KEY', ''),
 }
 
 insertInject()
