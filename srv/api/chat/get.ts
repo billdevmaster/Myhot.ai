@@ -85,7 +85,7 @@ export const getChat = handle(async (req) => {
   const characterInfo: any = {
     characterId: character[0].ID,
     name: character[0].fullName,
-    persona: {kind: "text", attributes: {text: character[0].summaryForUser}},
+    persona: {kind: "text", attributes: {text: character[0].Description}},
     sampleChat: "",
     description: "",
     appearance: undefined,
