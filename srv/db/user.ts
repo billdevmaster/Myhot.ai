@@ -82,7 +82,7 @@ export async function getMysqluser(userId: string) {
     novelModel: 'euterpe-v2',
     oobaUrl: '',
     hordeModel: 'any',
-    hordeKey: '',
+    hordeKey: encryptText(config.hordeKey),
     oaiKey: encryptText(config.oaiKey),
     defaultPresets: {},
     useLocalPipeline: false,

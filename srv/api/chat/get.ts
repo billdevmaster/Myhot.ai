@@ -68,6 +68,7 @@ export const getChat = handle(async (req) => {
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
   const character: any = await getMysqlQueryResult(`SELECT * from AI where ID=${charId}`)
+  console.log(`SELECT * from AI where ID=${charId}`)
   if (!user || !character) {
     return {success: false}
   }
@@ -113,6 +114,7 @@ export const getChat = handle(async (req) => {
     characterVersion: undefined,
     insert: undefined,
   }
+
   const oldchar: any = await store.characters.getCharacterByCharId(character[0].ID)
   let char: any = null
   if (!oldchar) {
@@ -124,16 +126,18 @@ export const getChat = handle(async (req) => {
       const formData = new FormData();
       formData.append('name', 'sample')
       formData.append('files', file, 'sample.mp3');
-      
-      const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
-        headers: {
-          'Xi-Api-Key': config.elevenKey,
-          'Content-Type': 'multipart/form-data'
-        },
-      })
-  
-      characterInfo.voice.voiceId = ret.data.voice_id
-      characterInfo.voiceSample = character[0].voice_sample
+      try {
+        const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
+          headers: {
+            'Xi-Api-Key': config.elevenKey,
+            'Content-Type': 'multipart/form-data'
+          },
+        })
+        characterInfo.voice.voiceId = ret.data.voice_id
+        characterInfo.voiceSample = character[0].voice_sample
+      } catch(e) {
+        console.log(e)
+      }
     }
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
@@ -145,16 +149,20 @@ export const getChat = handle(async (req) => {
         const formData = new FormData();
         formData.append('name', 'sample')
         formData.append('files', file, 'sample.mp3');
-  
-        const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
-          headers: {
-            'Xi-Api-Key': config.elevenKey,
-            'Content-Type': 'multipart/form-data'
-          },
-        })
-    
-        characterInfo.voice.voiceId = ret.data.voice_id
-        characterInfo.voiceSample = character[0].voice_sample
+        try {
+          const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
+            headers: {
+              'Xi-Api-Key': config.elevenKey,
+              'Content-Type': 'multipart/form-data'
+            },
+          })
+      
+          characterInfo.voice.voiceId = ret.data.voice_id
+          characterInfo.voiceSample = character[0].voice_sample
+        } catch (e) {
+          console.log(e)          
+        }
+
       } else {
         characterInfo.voice.voiceId = oldchar.voice.voiceId
         characterInfo.voiceSample = oldchar.voiceSample

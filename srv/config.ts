@@ -138,6 +138,7 @@ export const config = {
   elevenKey: env('ELEVEN_LABS_API_KEY', ''),
   oaiKey: env('OPENAI_KEY', ''),
   novelaiKey: env('NOVELAI_KEY', ''),
+  hordeKey: env('HORDE_KEY', ''),
 }
 
 insertInject()
