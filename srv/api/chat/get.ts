@@ -68,7 +68,7 @@ export const getChat = handle(async (req) => {
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
   const character: any = await getMysqlQueryResult(`SELECT * from AI where ID=${charId}`)
-  console.log(`SELECT * from AI where ID=${charId}`)
+
   if (!user || !character) {
     return {success: false}
   }
@@ -176,7 +176,8 @@ export const getChat = handle(async (req) => {
     name: 'Chat',
     // genPreset: 'd4d0b94e-a794-4589-98d5-4502a8d1e309', //chat gpt
     // genPreset: '4e7a86d7-2d94-4aa2-b6eb-63dbda798f6a', // novel ai
-    genPreset: '8c5813e0-875a-4f04-b7b9-973238feb79b', //chat gpt
+    genPreset: '8c5813e0-875a-4f04-b7b9-973238feb79b', //horde
+    elevenKey: user[0].elevenKey ? user[0].elevenKey : null
   }
   const oldchat = await store.chats.getChatByUserAndChar(userId, char._id)
   let chat: any = null
@@ -191,6 +192,6 @@ export const getChat = handle(async (req) => {
       userId: userId,
     })
   }
-  const token = await createFEAccessToken(`${user.Fname} ${user.Lname}`, userId)
+  const token = await createFEAccessToken(`${user[0].Fname} ${user[0].Lname}`, userId)
   return { success: true, token, chat }
 })

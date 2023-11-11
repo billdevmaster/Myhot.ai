@@ -259,6 +259,7 @@ export namespace AppSchema {
     scenarioStates?: string[]
 
     treeLeafId?: string
+    elevenKey?: string
   }
 
   export interface ChatMember {

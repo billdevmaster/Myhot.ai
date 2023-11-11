@@ -69,6 +69,7 @@ export async function create(
     | 'overrides'
     | 'genPreset'
     | 'mode'
+    | 'elevenKey'
   >
 ) {
   const id = `${v4()}`
@@ -95,6 +96,7 @@ export async function create(
     genPreset: props.genPreset,
     messageCount: props.greeting ? 1 : 0,
     tempCharacters: {},
+    elevenKey: props.elevenKey
   }
 
   await db('chat').insertOne(doc)

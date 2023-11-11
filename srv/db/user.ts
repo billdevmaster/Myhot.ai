@@ -87,9 +87,9 @@ export async function getMysqluser(userId: string) {
     defaultPresets: {},
     useLocalPipeline: false,
     speechtotext : {
-      enabled : true,
-      autoSubmit : true,
-      autoRecord : true
+      enabled : false,
+      autoSubmit : false,
+      autoRecord : false
     },
     texttospeech : {
       enabled : true,
