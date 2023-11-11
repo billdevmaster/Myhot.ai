@@ -92,8 +92,8 @@ export async function getMysqluser(userId: string) {
       autoRecord : false
     },
     texttospeech : {
-      enabled : true,
-      filterActions : true
+      enabled : false,
+      filterActions : false
     },
     elevenLabsApiKey: encryptText(config.elevenKey)
   }
