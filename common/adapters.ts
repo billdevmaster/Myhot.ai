@@ -48,7 +48,15 @@ export const PERSONA_LABELS: { [key in PersonaFormat]: string } = {
   text: 'Plain Text',
 }
 
-export const THIRDPARTY_FORMATS = ['kobold', 'openai', 'claude', 'ooba', 'llamacpp'] as const
+export const THIRDPARTY_FORMATS = [
+  'kobold',
+  'openai',
+  'claude',
+  'ooba',
+  'llamacpp',
+  'exllamav2',
+  'koboldcpp',
+] as const
 
 export const AI_ADAPTERS = [
   'agnaistic',

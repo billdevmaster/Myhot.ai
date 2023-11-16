@@ -3,8 +3,8 @@ import { defaultPresets } from '../../common/presets'
 import { AppLog, logger } from '../logger'
 import { normalizeUrl, sanitise, sanitiseAndTrim, trimResponseV2 } from '../api/chat/common'
 import { ModelAdapter } from './type'
-import { requestStream } from './stream'
-import { getTextgenPayload, llamaStream } from './ooba'
+import { requestStream, websocketStream } from './stream'
+import { getThirdPartyPayload, llamaStream } from './ooba'
 import { getStoppingStrings } from './prompt'
 
 /**
@@ -32,8 +32,10 @@ export const handleKobold: ModelAdapter = async function* (opts) {
   const { members, characters, user, prompt, mappedSettings } = opts
 
   const body =
-    opts.gen.thirdPartyFormat === 'llamacpp'
-      ? getTextgenPayload(opts)
+    opts.gen.thirdPartyFormat === 'llamacpp' ||
+    opts.gen.thirdPartyFormat === 'exllamav2' ||
+    opts.gen.thirdPartyFormat === 'koboldcpp'
+      ? getThirdPartyPayload(opts)
       : { ...base, ...mappedSettings, prompt }
 
   const baseURL = `${normalizeUrl(user.koboldUrl)}`
@@ -61,8 +63,8 @@ export const handleKobold: ModelAdapter = async function* (opts) {
 
   yield { prompt: body.prompt }
 
-  logger.debug({ ...body, prompt: null }, 'Kobold payload')
   logger.debug(`Prompt:\n${body.prompt}`)
+  logger.debug({ ...body, prompt: null }, 'Kobold payload')
 
   // Only KoboldCPP at version 1.30 and higher has streaming support
   const isStreamSupported =
@@ -73,6 +75,8 @@ export const handleKobold: ModelAdapter = async function* (opts) {
   const stream =
     opts.gen.thirdPartyFormat === 'llamacpp'
       ? llamaStream(baseURL, body)
+      : opts.gen.thirdPartyFormat === 'exllamav2'
+      ? await websocketStream({ url: baseURL, body })
       : opts.gen.streamResponse && isStreamSupported
       ? streamCompletition(`${baseURL}/api/extra/generate/stream`, body, opts.log)
       : fullCompletion(`${baseURL}/api/v1/generate`, body, opts.log)
@@ -175,6 +179,8 @@ const streamCompletition = async function* (streamUrl: any, body: any, log: AppL
   })
 
   const tokens = []
+  const start = Date.now()
+  let first = 0
 
   try {
     const events = requestStream(resp)
@@ -194,6 +200,9 @@ const streamCompletition = async function* (streamUrl: any, body: any, log: AppL
       }
 
       tokens.push(data.token)
+      if (!first) {
+        first = Date.now()
+      }
       yield { token: data.token }
     }
   } catch (err: any) {
@@ -201,5 +210,18 @@ const streamCompletition = async function* (streamUrl: any, body: any, log: AppL
     return
   }
 
+  const ttfb = (Date.now() - first) / 1000
+  const total = (Date.now() - start) / 1000
+  const tps = tokens.length / ttfb
+  const total_tps = tokens.length / total
+  log.info(
+    {
+      ttfb: ttfb.toFixed(1),
+      total: total.toFixed(1),
+      tps: tps.toFixed(1),
+      total_tps: total_tps.toFixed(1),
+    },
+    'Performance'
+  )
   return { text: tokens.join('') }
 }
