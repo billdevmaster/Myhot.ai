@@ -127,7 +127,7 @@ export const getChat = handle(async (req) => {
       formData.append('name', 'sample')
       formData.append('files', file, 'sample.mp3');
       try {
-        const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
+        const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
           headers: {
             'Xi-Api-Key': config.elevenKey,
             'Content-Type': 'multipart/form-data'
@@ -150,9 +150,8 @@ export const getChat = handle(async (req) => {
         formData.append('name', 'sample')
         formData.append('files', file, 'sample.mp3');
         try {
-          const ret: any = await axios.post('https://api.elevenlabs.io/v1/voices/add', formData, {
+          const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
             headers: {
-              'Xi-Api-Key': config.elevenKey,
               'Content-Type': 'multipart/form-data'
             },
           })
