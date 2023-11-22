@@ -103,7 +103,7 @@ export async function generateVoice(
   //   error = ex.message || ex
   //   log.error({ err: ex }, 'Failed to generate audio')
   // }
-  const ret: any = await axios.get(`https://plenty-adjacent-spring-hold.trycloudflare.com/generate?text=${text}`);
+  const ret: any = await axios.post(`https://plenty-adjacent-spring-hold.trycloudflare.com/voice-generate`, {text, speaker: "john"});
   const audioBuffer = Buffer.from(ret.data.content, 'latin1');
 
   audio = {
