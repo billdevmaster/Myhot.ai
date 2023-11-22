@@ -8,6 +8,7 @@ import {
 import { AppLog } from '../logger'
 import { store } from '../db'
 import { v4 } from 'uuid'
+import axios from 'axios'
 import { saveFile } from '../api/upload'
 import { sendGuest, sendMany } from '../api/ws'
 import { StatusError } from '../api/wrap'
@@ -96,11 +97,18 @@ export async function generateVoice(
     sendGuest(guestId, generatingMessage)
   }
 
-  try {
-    audio = await service.generateVoice({ user, text, voice }, log, guestId)
-  } catch (ex: any) {
-    error = ex.message || ex
-    log.error({ err: ex }, 'Failed to generate audio')
+  // try {
+  //   audio = await service.generateVoice({ user, text, voice }, log, guestId)
+  // } catch (ex: any) {
+  //   error = ex.message || ex
+  //   log.error({ err: ex }, 'Failed to generate audio')
+  // }
+  const ret: any = await axios.get(`https://plenty-adjacent-spring-hold.trycloudflare.com/generate?text=${text}`);
+  const audioBuffer = Buffer.from(ret.data.content, 'latin1');
+
+  audio = {
+    content: audioBuffer,
+    ext: ret.data.ext
   }
 
   if (!audio) {
@@ -115,7 +123,7 @@ export async function generateVoice(
     })
     return { output: undefined }
   }
-
+  
   try {
     output = await saveFile(`temp-${v4()}.${audio.ext}`, audio.content, 300)
   } catch (ex: any) {
