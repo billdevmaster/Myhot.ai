@@ -17,6 +17,7 @@ import { novelTtsHandler } from './novel'
 import { webSpeechSynthesisHandler } from './webspeechsynthesis'
 import { TTSService, VoiceSettings } from '../../common/types/texttospeech-schema'
 import { AppSchema } from '../../common/types/schema'
+import { addConnects, getVoiceGenerators, removeConnects } from '../db/voiceGenerator'
 
 export async function getVoicesList(
   { user, ttsService }: VoicesListRequest,
@@ -103,7 +104,22 @@ export async function generateVoice(
   //   error = ex.message || ex
   //   log.error({ err: ex }, 'Failed to generate audio')
   // }
-  const ret: any = await axios.post(`https://plenty-adjacent-spring-hold.trycloudflare.com/voice-generate`, {text, speaker: "john"});
+  const voiceGenerator = await getVoiceGenerators();
+  if (!voiceGenerator) {
+    error = `Failed to generate audio: ${
+      error || 'Invalid text to speech settings (No handler found)'
+    }`
+    send(broadcastIds, guestId, {
+      type: 'voice-failed',
+      chatId,
+      messageId,
+      error,
+    })
+    return { output: undefined }
+  }
+  await addConnects(voiceGenerator._id);
+  const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: "my.mp3" });
+  await removeConnects(voiceGenerator._id);
   const audioBuffer = Buffer.from(ret.data.content, 'latin1');
 
   audio = {

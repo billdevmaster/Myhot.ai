@@ -23,6 +23,7 @@ export type AllDoc =
   | AppSchema.User
   | AppSchema.Profile
   | AppSchema.ChatLock
+  | AppSchema.VoiceGenerator
   | AppSchema.ChatMember
   | AppSchema.ChatInvite
   | AppSchema.UserGenPreset
@@ -260,6 +261,15 @@ export namespace AppSchema {
 
     treeLeafId?: string
     elevenKey?: string
+  }
+
+  export interface VoiceGenerator {
+    _id: string
+    kind: 'voice-generator'
+    host: string
+    port: string
+    connects: number
+    status: boolean
   }
 
   export interface ChatMember {
