@@ -133,7 +133,7 @@ export async function generateVoice(
   let audioBuffer: any;
   try {
     await addConnects(voiceGenerator._id);
-    const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: voiceSample });
+    const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: voiceSample ? voiceSample : "my.mp3" });
     audioBuffer = Buffer.from(ret.data.content, 'latin1');
   } catch (e) {
     console.log(e)
