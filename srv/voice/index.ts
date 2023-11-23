@@ -108,9 +108,7 @@ export async function generateVoice(
   // }
   const voiceGenerator = await getVoiceGenerators();
   if (!voiceGenerator) {
-    error = `Failed to generate audio: ${
-      error || 'Invalid text to speech settings (No handler found)'
-    }`
+    error = `Too many voice generating connects`
     send(broadcastIds, guestId, {
       type: 'voice-failed',
       chatId,
@@ -129,7 +127,6 @@ export async function generateVoice(
     voiceSample = "my.mp3"
   }
 
-  console.log("voiceSample", voiceSample)
   let audioBuffer: any;
   try {
     await addConnects(voiceGenerator._id);
