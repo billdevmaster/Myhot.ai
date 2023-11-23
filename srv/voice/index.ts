@@ -120,20 +120,30 @@ export async function generateVoice(
     return { output: undefined }
   }
   const chatData = await getChat(chatId)
-  let voiceSample: string | undefined = "my.mp3"
+  let voiceSample: string;
+
   if (chatData?.chat.characterId) {
     const character = await getCharacter("", chatData?.chat.characterId)
-    voiceSample = character?.voiceSample
+    voiceSample = character?.voiceSample ? character?.voiceSample : "my.mp3"
+  } else {
+    voiceSample = "my.mp3"
   }
-  
-  await addConnects(voiceGenerator._id);
-  const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: voiceSample });
-  await removeConnects(voiceGenerator._id);
-  const audioBuffer = Buffer.from(ret.data.content, 'latin1');
+
+  console.log("voiceSample", voiceSample)
+  let audioBuffer: any;
+  try {
+    await addConnects(voiceGenerator._id);
+    const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: voiceSample });
+    audioBuffer = Buffer.from(ret.data.content, 'latin1');
+  } catch (e) {
+    console.log(e)
+  } finally {
+    await removeConnects(voiceGenerator._id);
+  }
 
   audio = {
     content: audioBuffer,
-    ext: ret.data.ext
+    ext: "wav"
   }
 
   if (!audio) {
