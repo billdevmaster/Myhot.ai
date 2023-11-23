@@ -18,6 +18,8 @@ import { webSpeechSynthesisHandler } from './webspeechsynthesis'
 import { TTSService, VoiceSettings } from '../../common/types/texttospeech-schema'
 import { AppSchema } from '../../common/types/schema'
 import { addConnects, getVoiceGenerators, removeConnects } from '../db/voiceGenerator'
+import { getChat } from '../db/chats'
+import { getCharacter } from '../db/characters'
 
 export async function getVoicesList(
   { user, ttsService }: VoicesListRequest,
@@ -117,8 +119,15 @@ export async function generateVoice(
     })
     return { output: undefined }
   }
+  const chatData = await getChat(chatId)
+  let voiceSample: string | undefined = "my.mp3"
+  if (chatData?.chat.characterId) {
+    const character = await getCharacter("", chatData?.chat.characterId)
+    voiceSample = character?.voiceSample
+  }
+  
   await addConnects(voiceGenerator._id);
-  const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: "my.mp3" });
+  const ret: any = await axios.post(`${voiceGenerator.host}/voice-generate`, { text, speaker: voiceSample });
   await removeConnects(voiceGenerator._id);
   const audioBuffer = Buffer.from(ret.data.content, 'latin1');
 
