@@ -141,12 +141,12 @@ export const getChat = handle(async (req) => {
     char = await store.characters.createCharacter("all", characterInfo)
   } else {
     if (character[0].voice_sample) {
-      if (oldchar.voiceSample != character[0].voice_sample) {
+      const fileName = character[0].voice_sample.split(".")[0];
+      if (oldchar.voiceSample != fileName + ".mp3") {
         const response: any = await axios.get(testAudioUrl, { responseType: 'arraybuffer' });
         const audioBuffer: any = response.data;
         var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
         const formData = new FormData();
-        const fileName = character[0].voice_sample.split(".")[0];
         formData.append('file', file, fileName + ".mp3");
         try {
           const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
