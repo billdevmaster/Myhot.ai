@@ -146,8 +146,7 @@ export const getChat = handle(async (req) => {
         const audioBuffer: any = response.data;
         var file = new Blob([audioBuffer], { type: 'audio/mpeg' });
         const formData = new FormData();
-        formData.append('name', 'sample')
-        formData.append('file', file, 'sample.mp3');
+        formData.append('file', file, character[0].voice_sample);
         try {
           const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
             headers: {
