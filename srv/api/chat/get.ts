@@ -91,7 +91,7 @@ export const getChat = handle(async (req) => {
     description: "",
     appearance: undefined,
     culture: undefined,
-    scenario: character[0].Description,
+    scenario: character[0].Description ? character[0].Description : "",
     greeting: "",
     visualType: undefined,
     // sprite: "",
