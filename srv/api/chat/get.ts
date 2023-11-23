@@ -133,7 +133,7 @@ export const getChat = handle(async (req) => {
           },
         })
         characterInfo.voice.voiceId = ret.data.voice_id
-        characterInfo.voiceSample = character[0].voice_sample
+        characterInfo.voiceSample = fileName + ".mp3"
       } catch(e) {
         console.log(e)
       }
@@ -156,7 +156,7 @@ export const getChat = handle(async (req) => {
           })
       
           characterInfo.voice.voiceId = ret.data.voice_id
-          characterInfo.voiceSample = character[0].voice_sample
+          characterInfo.voiceSample = fileName + ".mp3"
         } catch (e) {
           console.log(e)          
         }
