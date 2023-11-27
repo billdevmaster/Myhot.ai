@@ -14,7 +14,6 @@ import Loading from './shared/Loading'
 import Button from './shared/Button'
 
 import Maintenance from './shared/Maintenance'
-import CharacterChats from './pages/Character/ChatList'
 import ChatDetail from './pages/Chat/ChatDetail'
 import PendingPage from './pages/Chat/Pending'
 
@@ -23,7 +22,6 @@ import { usePane } from './shared/hooks'
 import { rootModalStore } from './store/root-modal'
 import { For } from 'solid-js'
 import { css, getMaxChatWidth } from './shared/util'
-import CreateChatForm from './pages/Chat/CreateChatForm'
 import Modal from './shared/Modal'
 import { ContextProvider } from './store/context'
 
@@ -36,9 +34,7 @@ const App: Component = () => {
     <Router>
       <Routes>
         <Route path="" component={Layout}>
-          <Route path="/chats/create/:id?" component={CreateChatForm} />
           <Route path="/character/:userid/:charid" component={PendingPage} />
-          <Route path="/chats" component={CharacterChats} />
           <Route path="/chat" component={ChatDetail} />
           <Route path="/chat/:id" component={ChatDetail} />
           <Route path="*" component={HomePage} />

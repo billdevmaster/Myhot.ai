@@ -43,7 +43,6 @@ import { useAutoExpression } from '/web/shared/Avatar/hooks'
 import AvatarContainer from '/web/shared/Avatar/Container'
 import { eventStore } from '/web/store/event'
 import Slot from '/web/shared/Slot'
-import ChatPanes from './components/ChatPanes'
 import { useAppContext } from '/web/store/context'
 import AvatarIcon from '/web/shared/AvatarIcon'
 
@@ -423,12 +422,13 @@ const ChatDetail: Component = () => {
                 </div>
               </div>
 
-              {/* <div class="flex flex-row gap-3">
+               <div class="flex flex-row gap-3">
                 <div class="hidden items-center text-xs italic text-[var(--text-500)] sm:flex">
                   {isOwner() ? adapterLabel() : ''}
                 </div>
 
                 <div class="" onClick={() => setShowOpts(true)}>
+                
                   <Settings class="icon-button" />
                   <DropMenu
                     show={showOpts()}
@@ -458,7 +458,7 @@ const ChatDetail: Component = () => {
                     <ArrowDownLeft />
                   </div>
                 </Show>
-              </div> */}
+              </div> 
             </header>
 
             <section
@@ -613,7 +613,6 @@ const ChatDetail: Component = () => {
                 />
               </section>
 
-              <ChatPanes setShowOpts={setShowOpts} />
             </section>
           </div>
         </main>
