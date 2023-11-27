@@ -7,7 +7,7 @@ import { toastStore } from './toasts'
 import { charsApi, getImageData } from './data/chars'
 import { imageApi } from './data/image'
 import { getAssetUrl, storage, toMap } from '../shared/util'
-import { toCharacterMap } from '../pages/Character/util'
+// import { toCharacterMap } from '../pages/Character/util'
 import { getUserId } from './api'
 
 const IMPERSONATE_KEY = 'agnai-impersonate'
@@ -207,24 +207,25 @@ export const characterStore = createStore<CharacterState>(
       char: NewCharacter,
       onSuccess?: (result: AppSchema.Character) => void
     ) {
-      if (creating) return
+      return
+      // if (creating) return
 
-      yield { creating: true }
-      const res = await charsApi.createCharacter(char)
-      yield { creating: false }
-      if (res.error) toastStore.error(`Failed to create character: ${res.error}`)
-      if (res.result) {
-        toastStore.success(`Successfully created character`)
-        events.emit(EVENTS.charUpdated, res.result, 'created')
-        yield {
-          characters: {
-            list: list.concat(res.result),
-            map: toCharacterMap(list.concat(res.result)),
-            loaded,
-          },
-        }
-        onSuccess?.(res.result)
-      }
+      // yield { creating: true }
+      // const res = await charsApi.createCharacter(char)
+      // yield { creating: false }
+      // if (res.error) toastStore.error(`Failed to create character: ${res.error}`)
+      // if (res.result) {
+      //   toastStore.success(`Successfully created character`)
+      //   events.emit(EVENTS.charUpdated, res.result, 'created')
+      //   yield {
+      //     characters: {
+      //       list: list.concat(res.result),
+      //       map: toCharacterMap(list.concat(res.result)),
+      //       loaded,
+      //     },
+      //   }
+      //   onSuccess?.(res.result)
+      // }
     },
     async *editCharacter(
       { characters: { list, map, loaded }, chatChars },

@@ -16,7 +16,7 @@ import { subscribe } from './socket'
 import { toastStore } from './toasts'
 import { replace } from '/common/util'
 
-export { AllChat }
+// export { AllChat }
 
 export type ChatState = {
   lastChatId: string | null
