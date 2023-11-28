@@ -328,7 +328,7 @@ const InputBar: Component<{
       </span>
       <span class="bg-white h-[40px] flex items-center rounded-l-none rounded-xl">
         <Switch>
-          {/* <Match when={text() === '' || listening()}>
+          <Match when={text() === '' || listening()}>
             <SpeechRecognitionRecorder
               culture={props.char?.culture}
               onText={(value) => setText(value)}
@@ -336,7 +336,7 @@ const InputBar: Component<{
               cleared={cleared}
               listening={setListening}
             />
-          </Match> */}
+          </Match>
 
           <Match when>
             <Button schema="clear">

@@ -15,6 +15,7 @@ import { defaultCulture } from '../../../shared/CultureCodes'
 import { msgStore, toastStore, userStore } from '../../../store'
 import { AppSchema } from '../../../../common/types/schema'
 import { createDebounce } from '/web/shared/util'
+import MicImg from '../../../asset/mic.png'
 
 const win: any = window
 
@@ -237,15 +238,10 @@ export const SpeechRecognitionRecorder: Component<{
       <Show when={speechRecognition() && settings.enabled}>
         <Button
           schema="clear"
-          class={`${isListening() ? 'text-red-500' : 'text-gray-500'}`}
+          class={`${isListening() ? 'text-red-500' : 'text-gray-500'} py-0`}
           onClick={toggleListening}
         >
-          <Mic
-            size={18}
-            classList={{
-              'animate-pulse': pendingRecord() || isHearing(),
-            }}
-          />
+          <img src={MicImg} alt="" class="w-[48px]" />
         </Button>
       </Show>
     </>

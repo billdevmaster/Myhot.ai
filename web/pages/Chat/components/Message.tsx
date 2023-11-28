@@ -40,6 +40,8 @@ import { trimSentence } from '/common/util'
 import { EVENTS, events } from '/web/emitter'
 import TextInput from '/web/shared/TextInput'
 import { Card } from '/web/shared/Card'
+import Mic from '../../../asset/mic.png'
+import Speaker from '../../../asset/speaker.png'
 
 type MessageProps = {
   msg: SplitMessage
@@ -115,8 +117,8 @@ const SingleMessage: Component<
       props.msg.characterId && !props.msg.userId
         ? ctx.bg.bot
         : props.msg.ooc
-        ? ctx.bg.ooc
-        : ctx.bg.user
+          ? ctx.bg.ooc
+          : ctx.bg.user
 
     const styles = { ...base }
     const show = opts[0]()
@@ -159,275 +161,256 @@ const SingleMessage: Component<
   const format = createMemo(() => ({ size: user.ui.avatarSize, corners: user.ui.avatarCorners }))
 
   return (
-    <div
-      class="flex w-full rounded-md px-2 py-2 pr-2 sm:px-4"
-      style={bgStyles()}
-      data-sender={props.msg.characterId ? 'bot' : 'user'}
-      data-bot={props.msg.characterId ? ctx.char?.name : ''}
-      data-user={props.msg.userId ? state.memberIds[props.msg.userId]?.handle : ''}
-      data-last={props.last?.toString()}
-      data-lastsplit={props.lastSplit?.toString()}
-    >
-      <div class={`flex w-full ${opacityClass}`}>
-        <div class={`flex h-fit w-full select-text flex-col gap-1`}>
-          <div class="break-words">
-            <span
-              class={`float-left pr-3`}
-              style={{ 'min-height': user.ui.imageWrap ? '' : img() }}
-              data-bot-avatar={isBot}
-              data-user-avatar={isUser}
-            >
-              <Switch>
-                <Match when={props.msg.event === 'world'}>
-                  <div
-                    class={`avatar-${format().size} flex shrink-0 items-center justify-center pt-3`}
-                  >
-                    <Zap />
-                  </div>
-                </Match>
-
-                <Match when={voice.status === 'generating'}>
-                  <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
-                    <AvatarIcon format={format()} Icon={DownloadCloud} />
-                  </div>
-                </Match>
-
-                <Match when={voice.status === 'playing'}>
-                  <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
-                    <AvatarIcon format={format()} Icon={PauseCircle} />
-                  </div>
-                </Match>
-
-                <Match when={ctx.allBots[props.msg.characterId!]}>
-                  <CharacterAvatar
-                    char={ctx.allBots[props.msg.characterId!]}
-                    format={format()}
-                    openable
-                    bot
-                    zoom={1.75}
-                  />
-                </Match>
-
-                {/* <Match when={!!ctx.allBots[props.msg.characterId!]}>
-                  <CharacterAvatar
-                    openable
-                    char={ctx.allBots[props.msg.characterId!]}
-                    format={format()}
-                    bot={!props.msg.userId}
-                    zoom={1.75}
-                  />
-                </Match> */}
-
-                {/* <Match when={ctx.char && !!props.msg.characterId}>
-                  <CharacterAvatar
-                    char={
-                      ctx.activeMap[props.msg.characterId!] ||
-                      ctx.tempMap[props.msg.characterId!] ||
-                      {}
-                    }
-                    openable
-                    zoom={1.75}
-                    bot={true}
-                    format={format()}
-                  />
-                </Match> */}
-
-                <Match when={!props.msg.characterId}>
-                  <AvatarIcon
-                    format={format()}
-                    Icon={DownloadCloud}
-                    avatarUrl={state.memberIds[props.msg.userId!]?.avatar}
-                    anonymize={ctx.anonymize}
-                  />
-                </Match>
-              </Switch>
-            </span>
-            <span class="flex flex-row justify-between pb-1">
-              <span
-                class={`flex min-w-0 shrink flex-col items-start gap-1 overflow-hidden`}
-                classList={{
-                  'sm:flex-col': props.isPaneOpen,
-                  'sm:gap-1': props.isPaneOpen,
-                  'sm:flex-row': !props.isPaneOpen,
-                  'sm:gap-0': !props.isPaneOpen,
-                  'sm:items-end': !props.isPaneOpen,
-                  italic: props.msg.ooc,
-                }}
+    <div class={`flex items-start ${!props.msg.characterId ? 'flex-row-reverse' : ''}`}>
+      <Switch>
+        <Match when={ctx.allBots[props.msg.characterId!]}>
+          <img src={Speaker} alt="" class="w-[60px]" />
+        </Match>
+        <Match when={!props.msg.characterId}>
+          <img src={Mic} alt="" class="w-[60px]" />
+        </Match>
+      </Switch>
+      <div
+        class={`flex rounded-md px-2 py-2 pr-2 sm:px-4 ${ctx.allBots[props.msg.characterId!] ? 'bg-gradient-to-r from-gray-400 to-gray-300' : ''} ${!props.msg.characterId ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : ''} `}
+        data-sender={props.msg.characterId ? 'bot' : 'user'}
+        data-bot={props.msg.characterId ? ctx.char?.name : ''}
+        data-user={props.msg.userId ? state.memberIds[props.msg.userId]?.handle : ''}
+        data-last={props.last?.toString()}
+        data-lastsplit={props.lastSplit?.toString()}
+      >
+        <div class={`flex w-full ${opacityClass}`}>
+          <div class={`flex h-fit w-full select-text flex-col gap-1`}>
+            <div class="break-words">
+              {/* <span
+                class={`float-left pr-3`}
+                style={{ 'min-height': user.ui.imageWrap ? '' : img() }}
+                data-bot-avatar={isBot}
+                data-user-avatar={isUser}
               >
-                <b
-                  class={`chat-name text-900 mr-2 max-w-[160px] overflow-hidden  text-ellipsis whitespace-nowrap sm:max-w-[400px]`}
-                  // Necessary to override text-md and text-lg's line height, for proper alignment
-                  style="line-height: 1;"
-                  data-bot-name={isBot}
-                  data-user-name={isUser}
+                <Switch>
+                  <Match when={props.msg.event === 'world'}>
+                    <div
+                      class={`avatar-${format().size} flex shrink-0 items-center justify-center pt-3`}
+                    >
+                      <Zap />
+                    </div>
+                  </Match>
+
+                  <Match when={voice.status === 'generating'}>
+                    <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
+                      <AvatarIcon format={format()} Icon={DownloadCloud} />
+                    </div>
+                  </Match>
+
+                  <Match when={voice.status === 'playing'}>
+                    <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
+                      <AvatarIcon format={format()} Icon={PauseCircle} />
+                    </div>
+                  </Match>
+
+                  <Match when={ctx.allBots[props.msg.characterId!]}>
+                    <CharacterAvatar
+                      char={ctx.allBots[props.msg.characterId!]}
+                      format={format()}
+                      openable
+                      bot
+                      zoom={1.75}
+                    />
+                  </Match>
+
+                  <Match when={!props.msg.characterId}>
+                    <AvatarIcon
+                      format={format()}
+                      Icon={DownloadCloud}
+                      avatarUrl={state.memberIds[props.msg.userId!]?.avatar}
+                      anonymize={ctx.anonymize}
+                    />
+                  </Match>
+                </Switch>
+              </span> */}
+              <span class="flex flex-row justify-between pb-1">
+                <span
+                  class={`flex min-w-0 shrink flex-col items-start gap-1 overflow-hidden`}
                   classList={{
-                    hidden: !!props.msg.event,
-                    'sm:text-base': props.isPaneOpen,
-                    'sm:text-lg': !props.isPaneOpen,
+                    'sm:flex-col': props.isPaneOpen,
+                    'sm:gap-1': props.isPaneOpen,
+                    'sm:flex-row': !props.isPaneOpen,
+                    'sm:gap-0': !props.isPaneOpen,
+                    'sm:items-end': !props.isPaneOpen,
+                    italic: props.msg.ooc,
                   }}
                 >
-                  <Switch>
-                    <Match when={props.msg.characterId}>
-                      {ctx.allBots[props.msg.characterId!]?.name ||
-                        (props.msg.split && props.msg.characterId) ||
-                        ctx.char?.name!}
-                    </Match>
-                    <Match when={true}>{handleToShow()}</Match>
-                  </Switch>
-                </b>
+                  <b
+                    class={`chat-name text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''}  mr-2 max-w-[160px] overflow-hidden  text-ellipsis whitespace-nowrap sm:max-w-[400px]`}
+                    // Necessary to override text-md and text-lg's line height, for proper alignment
+                    style="line-height: 1;"
+                    data-bot-name={isBot}
+                    data-user-name={isUser}
+                    classList={{
+                      hidden: !!props.msg.event,
+                      'sm:text-base': props.isPaneOpen,
+                      'sm:text-lg': !props.isPaneOpen,
+                    }}
+                  >
+                    <Switch>
+                      <Match when={!props.msg.characterId}>
+                        You
+                      </Match>
+                      <Match when={ctx.allBots[props.msg.characterId!]}>
+                        {ctx.allBots[props.msg.characterId!]?.name}
+                      </Match>
+                      <Match when={true}>{handleToShow()}</Match>
+                    </Switch>
+                  </b>
 
-                <span
-                  classList={{ invisible: ctx.anonymize }}
-                  class={`message-date text-600 flex items-center text-xs leading-none`}
-                  data-bot-time={isBot}
-                  data-user-time={isUser}
-                >
-                  {new Date(props.msg.createdAt).toLocaleString()}
-                  <Show when={canShowMeta(props.original, ctx.promptHistory[props.original._id])}>
-                    <span
-                      class="text-600 hover:text-900 ml-1 cursor-pointer"
-                      onClick={() =>
-                        rootModalStore.info(
-                          <Meta
-                            msg={props.original}
-                            history={ctx.promptHistory[props.original._id]}
-                          />
-                        )
-                      }
-                    >
-                      <Info size={14} />
-                    </span>
-                  </Show>
+                  <span
+                    classList={{ invisible: ctx.anonymize }}
+                    class={`message-date text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''} flex items-center text-xs leading-none`}
+                    data-bot-time={isBot}
+                    data-user-time={isUser}
+                  >
+                    {new Date(props.msg.createdAt).toLocaleString()}
+                    <Show when={canShowMeta(props.original, ctx.promptHistory[props.original._id])}>
+                      <span
+                        class="text-600 hover:text-900 ml-1 cursor-pointer"
+                        onClick={() =>
+                          rootModalStore.info(
+                            <Meta
+                              msg={props.original}
+                              history={ctx.promptHistory[props.original._id]}
+                            />
+                          )
+                        }
+                      >
+                        <Info size={14} />
+                      </span>
+                    </Show>
+                  </span>
                 </span>
+                <Switch>
+                  <Match
+                    when={false}
+                  >
+                    <MessageOptions
+                      char={ctx.char!}
+                      original={props.original}
+                      msg={props.msg}
+                      chatEditing={props.editing}
+                      edit={edit}
+                      startEdit={startEdit}
+                      onRemove={props.onRemove}
+                      lastSplit={props.lastSplit}
+                      last={props.last}
+                      tts={!!props.tts}
+                      partial={props.partial}
+                      show={opts}
+                    />
+                  </Match>
+
+                  <Match when={edit()}>
+                    <div class="cancel-edit-btn mr-4 flex items-center gap-4 text-sm">
+                      <div class="icon-button text-red-500" onClick={cancelEdit}>
+                        <X size={22} />
+                      </div>
+                      <div class="confirm-edit-btn icon-button text-green-500" onClick={saveEdit}>
+                        <Check size={22} />
+                      </div>
+                    </div>
+                  </Match>
+
+                  <Match when={props.last && props.swipe}>
+                    <div class="mr-4 flex items-center gap-4 text-sm">
+                      <X size={22} class="cursor-pointer text-red-500" onClick={props.cancelSwipe} />
+                      <Check
+                        size={22}
+                        class="cursor-pointer text-green-500"
+                        onClick={props.confirmSwipe}
+                      />
+                    </div>
+                  </Match>
+                </Switch>
               </span>
-              <Switch>
-                <Match
-                  when={
-                    !edit() &&
-                    !props.swipe &&
-                    user.user?._id === ctx.chat?.userId &&
-                    ctx.chat?.mode !== 'companion'
-                  }
-                >
-                  <MessageOptions
-                    char={ctx.char!}
-                    original={props.original}
-                    msg={props.msg}
-                    chatEditing={props.editing}
-                    edit={edit}
-                    startEdit={startEdit}
-                    onRemove={props.onRemove}
-                    lastSplit={props.lastSplit}
-                    last={props.last}
-                    tts={!!props.tts}
-                    partial={props.partial}
-                    show={opts}
-                  />
-                </Match>
-
-                <Match when={edit()}>
-                  <div class="cancel-edit-btn mr-4 flex items-center gap-4 text-sm">
-                    <div class="icon-button text-red-500" onClick={cancelEdit}>
-                      <X size={22} />
-                    </div>
-                    <div class="confirm-edit-btn icon-button text-green-500" onClick={saveEdit}>
-                      <Check size={22} />
-                    </div>
-                  </div>
-                </Match>
-
-                <Match when={props.last && props.swipe}>
-                  <div class="mr-4 flex items-center gap-4 text-sm">
-                    <X size={22} class="cursor-pointer text-red-500" onClick={props.cancelSwipe} />
-                    <Check
-                      size={22}
-                      class="cursor-pointer text-green-500"
-                      onClick={props.confirmSwipe}
-                    />
-                  </div>
-                </Match>
-              </Switch>
-            </span>
-            <div ref={avatarRef}>
-              <Switch>
-                <Match when={props.msg.adapter === 'image'}>
-                  <div class="flex flex-wrap gap-2">
-                    <img
-                      class={'mt-2 max-h-32 max-w-[unset] cursor-pointer rounded-md'}
-                      src={getAssetUrl(props.msg.msg)}
-                      onClick={() =>
-                        settingStore.showImage(props.original.msg, [
-                          toImageDeleteButton(props.msg._id, 0),
-                        ])
-                      }
-                    />
-                    <For each={props.original.extras || []}>
-                      {(src, i) => (
-                        <img
-                          class={'mt-2 max-h-32 max-w-[unset] cursor-pointer rounded-md'}
-                          src={getAssetUrl(src)}
-                          onClick={() =>
-                            settingStore.showImage(src, [
-                              toImageDeleteButton(props.msg._id, i() + 1),
-                            ])
-                          }
-                        />
-                      )}
-                    </For>
-                    <div
-                      class="icon-button mx-2 flex items-center"
-                      onClick={() => msgStore.createImage(props.msg._id, true)}
-                    >
-                      <PlusCircle size={20} />
-                    </div>
-                  </div>
-                </Match>
-                <Match when={!edit() && content().type !== 'waiting'}>
-                  <p
-                    class={`rendered-markdown px-1 ${content().class}`}
-                    data-bot-message={!props.msg.userId}
-                    data-user-message={!!props.msg.userId}
-                    innerHTML={content().message}
-                  />
-                  <Show when={!props.partial && props.last && props.lastSplit}>
-                    <div class="flex items-center justify-center gap-2">
-                      <For each={props.original.actions}>
-                        {(item) => (
-                          <Button
-                            size="sm"
-                            schema="gray"
-                            onClick={() => sendAction(props.sendMessage, item)}
-                          >
-                            {item.emote}
-                          </Button>
+              <div ref={avatarRef}>
+                <Switch>
+                  <Match when={props.msg.adapter === 'image'}>
+                    <div class="flex flex-wrap gap-2">
+                      <img
+                        class={'mt-2 max-h-32 max-w-[unset] cursor-pointer rounded-md'}
+                        src={getAssetUrl(props.msg.msg)}
+                        onClick={() =>
+                          settingStore.showImage(props.original.msg, [
+                            toImageDeleteButton(props.msg._id, 0),
+                          ])
+                        }
+                      />
+                      <For each={props.original.extras || []}>
+                        {(src, i) => (
+                          <img
+                            class={'mt-2 max-h-32 max-w-[unset] cursor-pointer rounded-md'}
+                            src={getAssetUrl(src)}
+                            onClick={() =>
+                              settingStore.showImage(src, [
+                                toImageDeleteButton(props.msg._id, i() + 1),
+                              ])
+                            }
+                          />
                         )}
                       </For>
+                      <div
+                        class="icon-button mx-2 flex items-center"
+                        onClick={() => msgStore.createImage(props.msg._id, true)}
+                      >
+                        <PlusCircle size={20} />
+                      </div>
                     </div>
-                  </Show>
-                </Match>
-                <Match when={!edit() && content().type === 'waiting'}>
-                  <div class="flex h-8 w-12 items-center justify-center">
-                    <div class="dot-flashing bg-[var(--hl-700)]"></div>
-                  </div>
-                </Match>
-                <Match when={edit()}>
-                  <div
-                    class="msg-edit-text-box"
-                    ref={editRef!}
-                    contentEditable={true}
-                    onKeyUp={(ev) => {
-                      if (ev.key === 'Escape') cancelEdit()
-                      if (ev.altKey && ev.key === 's') {
-                        ev.preventDefault()
-                        saveEdit()
-                      }
-                    }}
-                  ></div>
-                </Match>
-              </Switch>
+                  </Match>
+                  <Match when={!edit() && content().type !== 'waiting'}>
+                    <p
+                      class={`px-1 ${content().class} ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''}`}
+                      data-bot-message={!props.msg.userId}
+                      data-user-message={!!props.msg.userId}
+                      innerHTML={content().message}
+                    />
+                    <Show when={!props.partial && props.last && props.lastSplit}>
+                      <div class="flex items-center justify-center gap-2">
+                        <For each={props.original.actions}>
+                          {(item) => (
+                            <Button
+                              size="sm"
+                              schema="gray"
+                              onClick={() => sendAction(props.sendMessage, item)}
+                            >
+                              {item.emote}
+                            </Button>
+                          )}
+                        </For>
+                      </div>
+                    </Show>
+                  </Match>
+                  <Match when={!edit() && content().type === 'waiting'}>
+                    <div class="flex h-8 w-12 items-center justify-center">
+                      <div class="dot-flashing bg-[var(--hl-700)]"></div>
+                    </div>
+                  </Match>
+                  <Match when={edit()}>
+                    <div
+                      class="msg-edit-text-box"
+                      ref={editRef!}
+                      contentEditable={true}
+                      onKeyUp={(ev) => {
+                        if (ev.key === 'Escape') cancelEdit()
+                        if (ev.altKey && ev.key === 's') {
+                          ev.preventDefault()
+                          saveEdit()
+                        }
+                      }}
+                    ></div>
+                  </Match>
+                </Switch>
+              </div>
             </div>
+            {props.last && props.lastSplit && props.children}
           </div>
-          {props.last && props.lastSplit && props.children}
         </div>
       </div>
     </div>

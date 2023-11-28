@@ -413,7 +413,7 @@ const ChatDetail: Component = () => {
                 <span>
                   <LogoIcon/>
                 </span>
-                <p class="text-gray-900">Myhotai</p>
+                <p class="text-gray-900 text-3xl font-bold">{chats.char?.name}</p>
               </div>
             </header>
             {/* <header
