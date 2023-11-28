@@ -55,7 +55,7 @@ const Layout: Component = () => {
   const maxW = createMemo((): string => {
     if (isPaneOpen()) return 'max-w-full'
 
-    return getMaxChatWidth(state.ui.chatWidth)
+    return 'max-w-full'
   })
   const rootModals = rootModalStore()
 
@@ -73,12 +73,7 @@ const Layout: Component = () => {
 
   const bg = createMemo(() => {
     const styles: JSX.CSSProperties = {
-      'background-image':
-        state.background && !cfg.anonymize ? `url(${state.background})` : undefined,
-      'background-repeat': 'no-repeat',
-      'background-size': 'cover',
-      'background-position': 'center',
-      'background-color': isChat() ? undefined : '',
+      'background-color': 'bg-gray-200',
     }
     return styles
   })
@@ -86,13 +81,13 @@ const Layout: Component = () => {
   return (
     <ContextProvider>
       <style>{css}</style>
-      <div class="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-[var(--hl-900)] app flex flex-col justify-between">
+      <div class="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-[var(--hl-900)] app flex flex-col justify-between bg-gray-200">
         {/* <NavBar /> */}
         <div class="flex w-full grow flex-row overflow-y-hidden">
           {/* <Navigation /> */}
           <div class="w-full overflow-y-auto" data-background style={bg()}>
             <div
-              class={`mx-auto h-full min-h-full ${isChat() ? maxW() : 'max-w-8xl'} px-2 sm:px-3`}
+              class={`mx-auto h-full min-h-full ${isChat() ? maxW() : 'max-w-8xl'}`}
               classList={{
                 'content-background': !isChat(),
               }}

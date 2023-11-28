@@ -197,7 +197,7 @@ const TextInput: Component<{
           placeholder={placeholder()}
           value={value()}
           class={
-            'form-field focusable-field text-900 min-h-[40px] w-full rounded-xl px-4 py-2 ' +
+            'form-field text-gray-900 min-h-[40px] w-full rounded-xl px-4 py-2 ' +
             (props.class || '')
           }
           disabled={props.disabled}

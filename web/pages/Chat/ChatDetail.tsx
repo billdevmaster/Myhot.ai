@@ -45,6 +45,7 @@ import { eventStore } from '/web/store/event'
 import Slot from '/web/shared/Slot'
 import { useAppContext } from '/web/store/context'
 import AvatarIcon from '/web/shared/AvatarIcon'
+import LogoIcon from '/web/icons/LogoIcon'
 
 const ChatDetail: Component = () => {
   const { updateTitle } = setComponentPageTitle('Chat')
@@ -396,15 +397,26 @@ const ChatDetail: Component = () => {
     <>
       <Show when={!chats.loaded && !chats.chat}>
         <div>
-          <div>Loading conversation...</div>
+          <div class="text-gray-900">Loading conversation...</div>
         </div>
       </Show>
       <Show when={chats.chat}>
         <main class="mx-auto flex w-full justify-between gap-4">
           <div
-            class={`${chatGrid()} gap-1 sm:gap-2 ${chatMargin()} ${chatWidth()} mx-auto flex flex-col pb-1 xs:flex sm:py-2`}
+            class={`${chatGrid()} gap-1 ${chatMargin()} ${chatWidth()} mx-auto flex flex-col pb-1 xs:flex`}
           >
             <header
+              data-header=""
+              class={` bg-white h-[60px]`}
+            >
+              <div class="flex items-center m-auto max-w-7xl">
+                <span>
+                  <LogoIcon/>
+                </span>
+                <p class="text-gray-900">Myhotai</p>
+              </div>
+            </header>
+            {/* <header
               class={`hidden h-9 items-center justify-between rounded-md sm:flex`}
               style={headerBg()}
             >
@@ -446,158 +458,155 @@ const ChatDetail: Component = () => {
                     />
                   </DropMenu>
                 </div>
-
-                <Show when={!cfg.fullscreen}>
-                  <div class="icon-button" onClick={() => settingStore.fullscreen(true)}>
-                    <ArrowUpRight />
-                  </div>
-                </Show>
-
-                <Show when={cfg.fullscreen}>
-                  <div class="icon-button" onClick={() => settingStore.fullscreen(false)}>
-                    <ArrowDownLeft />
-                  </div>
-                </Show>
               </div> 
-            </header>
-
+            </header> */}
             <section
-              class={`flex w-full flex-row justify-end gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
+              class={`max-w-7xl m-auto w-full h-full gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
               style={contentStyles()}
             >
-              <section class="flex h-full w-full flex-col justify-end gap-2">
-                <div
-                  ref={(ref) => {
-                    slotContainer = ref
-                    slots.load(ref)
-                  }}
-                  class="sticky top-0 flex h-fit w-full justify-center"
-                >
-                  <Switch>
-                    <Match when={slots.size().w === 0}>{null}</Match>
-                    <Match when={slotContainer!}>
-                      <Slot sticky="always" slot="content" parent={slotContainer!} />
-                    </Match>
-                  </Switch>
-                </div>
-                <Show when={user.ui.viewMode === 'split'}>
-                  <section
-                    data-avatar-container
-                    ref={container!}
-                    class="flex items-end justify-center"
-                    style={{ height: `${viewHeight()}`, 'min-height': viewHeight() }}
-                  >
-                    <Show when={chats.char?.visualType === 'sprite'}>
-                      <AvatarContainer
-                        container={container!}
-                        body={chars.botMap[chats.char?._id!]?.sprite}
-                        expression={express.expr()}
-                      />
-                    </Show>
-                    <Show when={chats.char?.visualType !== 'sprite' && chats.char?.avatar}>
-                      <div class="flex h-full w-full justify-center">
-                        <img
-                          src={chats.char?.avatar!}
-                          class="flex h-full justify-center rounded-lg object-cover"
-                        />
-                      </div>
-                    </Show>
-                  </section>
-                </Show>
-                <section
-                  data-messages
-                  class={`mx-auto flex flex-col-reverse gap-4 overflow-y-auto ${msgsMaxWidth()} w-full`}
-                  ref={monitorScroll}
-                >
-                  <div id="chat-messages" class="flex w-full flex-col gap-2">
-                    {/* <Show when={chats.loaded && chatMsgs().length < 2 && chats.char?.description}>
-                      <div class="mb-4 flex flex-col items-center text-[var(--text-500)]">
-                        <div class="font-bold">Notes from the creator of {chats.char?.name}</div>
-                        {descriptionText()}
-                      </div>
-                    </Show> */}
-                    <Show when={chats.loaded && chatMsgs().length === 0 && !msgs.waiting}>
-                      <div class="flex justify-center">
-                        <Button onClick={generateFirst}>Generate Message</Button>
-                      </div>
-                    </Show>
-                    {/* Original Slot location */}
-                    <InfiniteScroll />
-                    <For each={chatMsgs()}>
-                      {(msg, i) => (
-                        <Message
-                          msg={msg}
-                          editing={chats.opts.editing}
-                          last={i() === indexOfLastRPMessage()}
-                          onRemove={() => setRemoveId(msg._id)}
-                          swipe={
-                            msg._id === retries()?.msgId && swipe() > 0 && retries()?.list[swipe()]
-                          }
-                          confirmSwipe={() => confirmSwipe(msg._id)}
-                          cancelSwipe={cancelSwipe}
-                          tts={tts()}
-                          retrying={msgs.retrying}
-                          partial={msgs.partial}
-                          sendMessage={sendMessage}
-                          isPaneOpen={!!chats.opts.pane}
-                        >
-                          {isOwner() &&
-                            retries()?.list?.length! > 1 &&
-                            i() === indexOfLastRPMessage() && (
-                              <SwipeMessage
-                                chatId={chats.chat?._id!}
-                                pos={swipe()}
-                                prev={clickSwipe(-1)}
-                                next={clickSwipe(1)}
-                                list={retries()?.list || []}
-                              />
-                            )}
-                        </Message>
-                      )}
-                    </For>
-                    <Show when={waitingMsg()}>
-                      <Message
-                        msg={waitingMsg()!}
-                        onRemove={() => {}}
-                        editing={chats.opts.editing}
-                        sendMessage={sendMessage}
-                        isPaneOpen={!!chats.opts.pane}
-                      />
-                    </Show>
+              <section class="flex h-full w-full flex-col justify-between gap-2">
+                <div class="flex overflow-y-auto h-full">
+                  <div class="mr-2">
+                    <AvatarIcon
+                      format={{ corners: 'lg', size: '3xl' }}
+                      avatarUrl={chats.char?.avatar!}
+                    />
                   </div>
-                </section>
-
-                <Show when={isSelfRemoved()}>
-                  <div class="flex w-full justify-center">
-                    You have been removed from the conversation
-                  </div>
-                </Show>
-                <Show when={isOwner() && ctx.activeBots.length > 1}>
-                  <div
-                    class={`flex min-h-[42px] justify-center gap-2 overflow-x-auto py-1 ${
-                      msgs.waiting ? 'opacity-70 saturate-0' : ''
-                    }`}
-                  >
-                    <Button
-                      size="md"
-                      schema="bordered"
-                      onClick={() => settingStore.toggleImpersonate(true)}
-                      classList={{ 'impersonate-btn': true }}
+                  <div class="flex w-full flex-col justify-end gap-2 overflow-y-auto">
+                    <div
+                      ref={(ref) => {
+                        slotContainer = ref
+                        slots.load(ref)
+                      }}
+                      class="sticky top-0 flex h-fit w-full justify-center"
                     >
-                      <VenetianMask size={16} />
-                    </Button>
-                    <For each={characterPills()}>
-                      {(bot) => (
-                        <CharacterPill
-                          char={bot}
-                          onClick={requestMessage}
-                          disabled={!!msgs.waiting}
-                          active={chats.replyAs === bot._id}
-                        />
-                      )}
-                    </For>
+                      <Switch>
+                        <Match when={slots.size().w === 0}>{null}</Match>
+                        <Match when={slotContainer!}>
+                          <Slot sticky="always" slot="content" parent={slotContainer!} />
+                        </Match>
+                      </Switch>
+                    </div>
+                    <Show when={user.ui.viewMode === 'split'}>
+                      <section
+                        data-avatar-container
+                        ref={container!}
+                        class="flex items-end justify-center"
+                        style={{ height: `${viewHeight()}`, 'min-height': viewHeight() }}
+                      >
+                        <Show when={chats.char?.visualType === 'sprite'}>
+                          <AvatarContainer
+                            container={container!}
+                            body={chars.botMap[chats.char?._id!]?.sprite}
+                            expression={express.expr()}
+                          />
+                        </Show>
+                        <Show when={chats.char?.visualType !== 'sprite' && chats.char?.avatar}>
+                          <div class="flex h-full w-full justify-center">
+                            <img
+                              src={chats.char?.avatar!}
+                              class="flex h-full justify-center rounded-lg object-cover"
+                            />
+                          </div>
+                        </Show>
+                      </section>
+                    </Show>
+                    <section
+                      data-messages
+                      class={`mx-auto flex flex-col-reverse gap-4 overflow-y-auto ${msgsMaxWidth()} w-full`}
+                      ref={monitorScroll}
+                    >
+                      <div id="chat-messages" class="flex w-full flex-col gap-2">
+                        {/* <Show when={chats.loaded && chatMsgs().length < 2 && chats.char?.description}>
+                          <div class="mb-4 flex flex-col items-center text-[var(--text-500)]">
+                            <div class="font-bold">Notes from the creator of {chats.char?.name}</div>
+                            {descriptionText()}
+                          </div>
+                        </Show> */}
+                        <Show when={chats.loaded && chatMsgs().length === 0 && !msgs.waiting}>
+                          <div class="flex justify-center">
+                            <Button onClick={generateFirst}>Generate Message</Button>
+                          </div>
+                        </Show>
+                        {/* Original Slot location */}
+                        <InfiniteScroll />
+                        <For each={chatMsgs()}>
+                          {(msg, i) => (
+                            <Message
+                              msg={msg}
+                              editing={chats.opts.editing}
+                              last={i() === indexOfLastRPMessage()}
+                              onRemove={() => setRemoveId(msg._id)}
+                              swipe={
+                                msg._id === retries()?.msgId && swipe() > 0 && retries()?.list[swipe()]
+                              }
+                              confirmSwipe={() => confirmSwipe(msg._id)}
+                              cancelSwipe={cancelSwipe}
+                              tts={tts()}
+                              retrying={msgs.retrying}
+                              partial={msgs.partial}
+                              sendMessage={sendMessage}
+                              isPaneOpen={!!chats.opts.pane}
+                            >
+                              {isOwner() &&
+                                retries()?.list?.length! > 1 &&
+                                i() === indexOfLastRPMessage() && (
+                                  <SwipeMessage
+                                    chatId={chats.chat?._id!}
+                                    pos={swipe()}
+                                    prev={clickSwipe(-1)}
+                                    next={clickSwipe(1)}
+                                    list={retries()?.list || []}
+                                  />
+                                )}
+                            </Message>
+                          )}
+                        </For>
+                        <Show when={waitingMsg()}>
+                          <Message
+                            msg={waitingMsg()!}
+                            onRemove={() => {}}
+                            editing={chats.opts.editing}
+                            sendMessage={sendMessage}
+                            isPaneOpen={!!chats.opts.pane}
+                          />
+                        </Show>
+                      </div>
+                    </section>
+
+                    <Show when={isSelfRemoved()}>
+                      <div class="flex w-full justify-center">
+                        You have been removed from the conversation
+                      </div>
+                    </Show>
+                    <Show when={isOwner() && ctx.activeBots.length > 1}>
+                      <div
+                        class={`flex min-h-[42px] justify-center gap-2 overflow-x-auto py-1 ${
+                          msgs.waiting ? 'opacity-70 saturate-0' : ''
+                        }`}
+                      >
+                        <Button
+                          size="md"
+                          schema="bordered"
+                          onClick={() => settingStore.toggleImpersonate(true)}
+                          classList={{ 'impersonate-btn': true }}
+                        >
+                          <VenetianMask size={16} />
+                        </Button>
+                        <For each={characterPills()}>
+                          {(bot) => (
+                            <CharacterPill
+                              char={bot}
+                              onClick={requestMessage}
+                              disabled={!!msgs.waiting}
+                              active={chats.replyAs === bot._id}
+                            />
+                          )}
+                        </For>
+                      </div>
+                    </Show>
                   </div>
-                </Show>
+                </div>
                 <InputBar
                   chat={chats.chat!}
                   swiped={swipe() !== 0}
@@ -612,7 +621,6 @@ const ChatDetail: Component = () => {
                   botMap={chars.botMap}
                 />
               </section>
-
             </section>
           </div>
         </main>

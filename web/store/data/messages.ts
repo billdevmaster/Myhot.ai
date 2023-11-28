@@ -228,7 +228,6 @@ export type GenerateOpts =
 
 export async function generateResponse(opts: GenerateOpts) {
   const { active } = chatStore.getState()
-
   if (!active) {
     return localApi.error('No active chat. Try refreshing.')
   }
@@ -360,7 +359,7 @@ async function createActiveChatPrompt(
   const { active } = chatStore.getState()
   const { ui, user } = userStore.getState()
   const { pipelineOnline } = settingStore.getState()
-
+  
   if (!active) {
     throw new Error('No active chat. Try refreshing')
   }
@@ -375,7 +374,6 @@ async function createActiveChatPrompt(
 
   const chatEmbeds: UserEmbed<{ name: string }>[] = []
   const userEmbeds: UserEmbed[] = []
-
   const text =
     opts.kind === 'send' ||
     opts.kind === 'send-event:world' ||
@@ -403,7 +401,6 @@ async function createActiveChatPrompt(
       userEmbeds.push(...users)
     }
   }
-
   const encoder = await getEncoder()
   const prompt = createPrompt(
     {
@@ -460,7 +457,6 @@ async function getGenerateProps(
   active: NonNullable<ChatState['active']>
 ): Promise<GenerateProps> {
   const entities = await getPromptEntities()
-
   const temporary = getServiceTempConfig(entities.settings.service)
   if (!entities.settings.temporary) {
     entities.settings.temporary = {}
@@ -678,17 +674,17 @@ async function getGuestEntities() {
 function getAuthedPromptEntities() {
   const { active, chatProfiles: members } = getStore('chat').getState()
   if (!active) return
-
+  
   const { profile, user } = getStore('user').getState()
   if (!profile || !user) return
-
+  
   const chat = active.chat
   const char = active.char
-
   const book = getStore('memory')
-    .getState()
-    .books.list.find((book) => book._id === chat.memoryId)
-
+  .getState()
+  .books.list.find((book) => book._id === chat.memoryId)
+  console.log(book)
+  
   const messages = getStore('messages').getState().msgs
   const settings = getAuthGenSettings(chat, user)!
   const scenarios = getStore('scenario')

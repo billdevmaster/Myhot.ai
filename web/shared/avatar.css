@@ -23,7 +23,7 @@
 }
 
 .avatar-3xl {
-  @apply w-14 min-w-[3.5rem] overflow-hidden sm:w-24 sm:min-w-[6rem];
+  @apply w-20 min-w-[3.5rem] overflow-hidden sm:w-24 sm:min-w-[20rem];
 }
 
 .avatar-xs.avatar-circle {
@@ -51,5 +51,5 @@
 }
 
 .avatar-3xl.avatar-circle {
-  @apply h-14 min-h-[3.5rem] sm:h-24 sm:min-h-[6rem];
+  @apply h-20 min-h-[3.5rem] sm:h-24 sm:min-h-[20rem];
 }

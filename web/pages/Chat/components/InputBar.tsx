@@ -225,7 +225,7 @@ const InputBar: Component<{
         value={text()}
         placeholder={placeholder()}
         parentClass="flex w-full"
-        class="input-bar rounded-r-none hover:bg-[var(--bg-800)] active:bg-[var(--bg-800)]"
+        class="input-bar rounded-r-none"
         onKeyDown={(ev) => {
           if (ev.key === '@') {
             setComplete(true)
@@ -241,12 +241,12 @@ const InputBar: Component<{
         }}
         onInput={updateText}
       />
-      <button
+      {/* <button
         onClick={onButtonClick}
         class="h-full rounded-l-none rounded-r-md border-l border-[var(--bg-700)] bg-[var(--bg-800)] px-2 py-2 hover:bg-[var(--bg-700)]"
       >
         <MoreHorizontal />
-      </button>
+      </button> */}
 
       <DropMenu show={menu()} close={() => setMenu(false)} vert="up" horz="left">
         <div class="flex w-48 flex-col gap-2 p-2">
@@ -323,23 +323,28 @@ const InputBar: Component<{
           </Show>
         </div>
       </DropMenu>
-      <Switch>
-        <Match when={text() === '' || listening()}>
-          <SpeechRecognitionRecorder
-            culture={props.char?.culture}
-            onText={(value) => setText(value)}
-            onSubmit={() => send()}
-            cleared={cleared}
-            listening={setListening}
-          />
-        </Match>
+      <span class="bg-white h-[40px] flex items-center border-l border-r border-gray-300">
+        <p class="text-gray-600 text-sm px-2">1/1700</p>
+      </span>
+      <span class="bg-white h-[40px] flex items-center rounded-l-none rounded-xl">
+        <Switch>
+          {/* <Match when={text() === '' || listening()}>
+            <SpeechRecognitionRecorder
+              culture={props.char?.culture}
+              onText={(value) => setText(value)}
+              onSubmit={() => send()}
+              cleared={cleared}
+              listening={setListening}
+            />
+          </Match> */}
 
-        <Match when>
-          <Button schema="clear">
-            <Send class="icon-button" size={18} onClick={send} />
-          </Button>
-        </Match>
-      </Switch>
+          <Match when>
+            <Button schema="clear">
+              <Send class="icon-button" size={18} onClick={send} />
+            </Button>
+          </Match>
+        </Switch>
+      </span>
     </div>
   )
 }
