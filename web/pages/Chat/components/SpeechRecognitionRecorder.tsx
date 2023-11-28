@@ -238,8 +238,9 @@ export const SpeechRecognitionRecorder: Component<{
       <Show when={speechRecognition() && settings.enabled}>
         <Button
           schema="clear"
-          class={`${isListening() ? 'text-red-500' : 'text-gray-500'} py-0`}
+          class={`${isListening() ? 'text-red-500' : 'text-gray-500'}`}
           onClick={toggleListening}
+          size="sm"
         >
           <img src={MicImg} alt="" class="w-[35px]" />
         </Button>
