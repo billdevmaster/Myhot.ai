@@ -51,6 +51,7 @@ export type ChatState = {
     pane?: ChatRightPane
   }
   promptHistory: Record<string, any>
+  voiceMessagesCount: number
 }
 
 export type ChatRightPane =
@@ -108,6 +109,7 @@ const initState: ChatState = {
     pane: undefined,
   },
   promptHistory: {},
+  voiceMessagesCount: 0
 }
 
 const EDITING_KEY = 'chat-detail-settings'
@@ -128,6 +130,7 @@ export const chatStore = createStore<ChatState>('chat', {
     pane: undefined,
   },
   promptHistory: {},
+  voiceMessagesCount: 0
 })((get, set) => {
   events.on(EVENTS.loggedOut, () => {
     const { opts } = get()
@@ -210,7 +213,6 @@ export const chatStore = createStore<ChatState>('chat', {
       yield { allChats: replace(chatId, allChats, update) }
 
       if (active?.chat._id !== chatId) return
-
       return {
         active: {
           ...active,

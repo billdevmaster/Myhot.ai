@@ -12,6 +12,7 @@ import { runGuidance } from '/common/guidance/guidance-parser'
 import { cyoaTemplate } from '/common/mode-templates'
 import { fillPromptWithLines } from '/common/prompt'
 import { getTokenCounter } from '/srv/tokenize'
+import { getCountVoiceMessages } from '/srv/db/voiceMessages'
 
 type GenRequest = UnwrapBody<typeof genValidator>
 
@@ -74,9 +75,9 @@ export const getMessages = handle(async ({ userId, params, query }) => {
   return { messages }
 })
 
-export const countMessages = handle(async (req) => {
+export const countVoiceMessages = handle(async (req) => {
   const chatId = req.params.id
-  const count = await store.msgs.countMessages(chatId)
+  const count = await getCountVoiceMessages(chatId);
   return {count}
 })
 

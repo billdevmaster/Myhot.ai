@@ -12,7 +12,7 @@ import { getAllChats, getCharacterChats, getChatDetail, getChat } from './get'
 import { guestGenerateMsg } from './guest-msg'
 import { createImage } from './image'
 import { createInvite, acceptInvite, rejectInvite, getInvites, uninviteMember } from './invite'
-import { generateMessageV2, getMessages, createMessage, countMessages } from './message'
+import { generateMessageV2, getMessages, createMessage, countVoiceMessages } from './message'
 import { deleteChat, deleteMessages } from './remove'
 import { textToSpeech } from './texttospeech'
 import { addCharacter, upsertTempCharacter, removeCharacter } from './characters'
@@ -30,9 +30,9 @@ router.post('/:id/guest-message', guestGenerateMsg)
 router.post('/:id/image', createImage)
 router.post('/:id/voice', textToSpeech)
 router.post('/getChat', getChat)
+router.get('/:id/count-voice-messages', countVoiceMessages)
 router.use(loggedIn)
 router.get('/:id', getChatDetail)
-router.get('/:id/count-messages', countMessages)
 router.get('/', getAllChats)
 router.post('/:id/restart', restartChat)
 router.get('/invites', getInvites)

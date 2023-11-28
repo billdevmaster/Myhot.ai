@@ -20,6 +20,7 @@ import { AppSchema } from '../../common/types/schema'
 import { addConnects, getVoiceGenerators, removeConnects } from '../db/voiceGenerator'
 import { getChat } from '../db/chats'
 import { getCharacter } from '../db/characters'
+import { addVoiceMessages } from '../db/voiceMessages'
 
 export async function getVoicesList(
   { user, ttsService }: VoicesListRequest,
@@ -169,7 +170,7 @@ export async function generateVoice(
   }
 
   send(broadcastIds, guestId, { type: 'voice-generated', chatId, messageId, url: output })
-
+  await addVoiceMessages(chatId, text)
   return { output }
 }
 

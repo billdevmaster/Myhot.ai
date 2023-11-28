@@ -19,6 +19,7 @@ import { createSpeech, pauseSpeech } from '../shared/Audio/speech'
 import { eventStore } from './event'
 import { findOne, replace } from '/common/util'
 import { sortAsc } from '/common/chat'
+import { chatsApi } from './data/chats'
 
 type ChatId = string
 
@@ -793,9 +794,17 @@ subscribe('voice-failed', { chatId: 'string', error: 'string' }, (body) => {
   toastStore.error(body.error)
 })
 
-subscribe('voice-generated', { chatId: 'string', messageId: 'string', url: 'string' }, (body) => {
+subscribe('voice-generated', { chatId: 'string', messageId: 'string', url: 'string' }, async (body) => {
   if (msgStore.getState().speaking?.messageId != body.messageId) return
   playVoiceFromUrl(body.chatId, body.messageId, body.url)
+  const chats = chatStore((s) => ({
+    lastId: s.lastChatId,
+    voiceMessagesCount: s.voiceMessagesCount
+  }))
+  if (chats.lastId) {
+    const res = await chatsApi.getVoiceMessagesCount(chats.lastId);
+    chatStore.setState({ ...chatStore.getState(), voiceMessagesCount: res })
+  }
 })
 
 subscribe('message-error', { error: 'any', chatId: 'string' }, (body) => {

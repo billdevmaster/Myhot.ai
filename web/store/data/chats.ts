@@ -21,10 +21,10 @@ export const chatsApi = {
   upsertTempCharacter,
   removeCharacter,
   restartChat,
+  getVoiceMessagesCount
 }
 
 export async function getChat(id: string) {
-  console.log(isLoggedIn())
   if (isLoggedIn()) {
     const res = await api.get<{
       chat: AppSchema.Chat
@@ -366,4 +366,9 @@ export async function removeCharacter(chatId: string, charId: string) {
 
   await localApi.saveChats(replace(chatId, chats, next))
   return localApi.result({ success: true })
+}
+
+export async function getVoiceMessagesCount(chatId: string) {
+  const res = await api.get(`/chat/${chatId}/count-voice-messages`);
+  return res.result.count
 }
