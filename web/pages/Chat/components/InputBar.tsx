@@ -27,6 +27,7 @@ import NoCharacterIcon from '/web/icons/NoCharacterIcon'
 import WizardIcon from '/web/icons/WizardIcon'
 import { EVENTS, events } from '/web/emitter'
 import { AutoComplete } from '/web/shared/AutoComplete'
+import { api } from "/web/store/api"
 
 const InputBar: Component<{
   chat: AppSchema.Chat
@@ -48,8 +49,13 @@ const InputBar: Component<{
   const user = userStore()
   const state = msgStore((s) => ({ lastMsg: s.msgs.slice(-1)[0], msgs: s.msgs }))
   const chats = chatStore((s) => ({ replyAs: s.active?.replyAs }))
-
+  const [countMessage, setCountMessage] = createSignal(0);
   useEffect(() => {
+    const getCountMessage = async () => {
+      const res = await api.get(`/chat/${props.chat._id}/count-messages`);
+      setCountMessage(res.result.count)
+    }
+    getCountMessage();
     const listener = (text: string) => {
       setText('')
       setText(text)
@@ -324,7 +330,7 @@ const InputBar: Component<{
         </div>
       </DropMenu>
       <span class="bg-white h-full flex items-center border-l border-r border-gray-300">
-        <p class="text-gray-600 text-sm px-2">1/1700</p>
+        <p class="text-gray-600 text-sm px-2">{countMessage()}/1700</p>
       </span>
       <span class="bg-white h-full flex items-center rounded-l-none rounded-xl">
         <Switch>

@@ -142,6 +142,23 @@ export async function getMessages(chatId: string, before?: string) {
   return docs.slice(1)
 }
 
+export async function countMessages(chatId: string) {
+  // The initial fetch will retrieve 100 messages.
+  // This is to ensure that users have sufficient messages in their application state to build prompts with enough context.
+
+  const docs = await db('chat-message')
+    .find({
+      kind: 'chat-message',
+      chatId,
+      $and: [{userId: {$exists: false}}]
+    })
+    .toArray()
+  
+  return docs.length
+}
+
+
+
 export async function getChatMessages(chat: AppSchema.Chat) {
   if (!chat.treeLeafId) return getMessages(chat._id)
   const tree = await store.chats.getChatTree(chat._id)

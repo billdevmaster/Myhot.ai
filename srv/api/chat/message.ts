@@ -74,6 +74,12 @@ export const getMessages = handle(async ({ userId, params, query }) => {
   return { messages }
 })
 
+export const countMessages = handle(async (req) => {
+  const chatId = req.params.id
+  const count = await store.msgs.countMessages(chatId)
+  return {count}
+})
+
 export const createMessage = handle(async (req) => {
   const { userId, body, params } = req
   const chatId = params.id
@@ -640,3 +646,4 @@ async function ensureBotMembership(
   update.characters = characters
   await store.chats.update(chat._id, update)
 }
+
