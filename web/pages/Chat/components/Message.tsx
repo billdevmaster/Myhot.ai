@@ -241,7 +241,7 @@ const SingleMessage: Component<
                   }}
                 >
                   <b
-                    class={`chat-name text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''}  mr-2 max-w-[160px] overflow-hidden  text-ellipsis whitespace-nowrap sm:max-w-[400px]`}
+                    class={`chat-name text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-900' : ''}  mr-2 max-w-[160px] overflow-hidden  text-ellipsis whitespace-nowrap sm:max-w-[400px]`}
                     // Necessary to override text-md and text-lg's line height, for proper alignment
                     style="line-height: 1;"
                     data-bot-name={isBot}
@@ -265,7 +265,7 @@ const SingleMessage: Component<
 
                   <span
                     classList={{ invisible: ctx.anonymize }}
-                    class={`message-date text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''} flex items-center text-xs leading-none`}
+                    class={`message-date text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-900' : ''} flex items-center text-xs leading-none`}
                     data-bot-time={isBot}
                     data-user-time={isUser}
                   >
@@ -366,7 +366,7 @@ const SingleMessage: Component<
                   </Match>
                   <Match when={!edit() && content().type !== 'waiting'}>
                     <p
-                      class={`px-1 ${content().class} ${ctx.allBots[props.msg.characterId!] ? 'text-gray-600' : ''}`}
+                      class={`px-1 ${content().class} ${ctx.allBots[props.msg.characterId!] ? 'text-gray-900' : ''}`}
                       data-bot-message={!props.msg.userId}
                       data-user-message={!!props.msg.userId}
                       innerHTML={content().message}

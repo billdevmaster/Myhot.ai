@@ -323,10 +323,10 @@ const InputBar: Component<{
           </Show>
         </div>
       </DropMenu>
-      <span class="bg-white h-[40px] flex items-center border-l border-r border-gray-300">
+      <span class="bg-white h-full flex items-center border-l border-r border-gray-300">
         <p class="text-gray-600 text-sm px-2">1/1700</p>
       </span>
-      <span class="bg-white h-[40px] flex items-center rounded-l-none rounded-xl">
+      <span class="bg-white h-full flex items-center rounded-l-none rounded-xl">
         <Switch>
           <Match when={text() === '' || listening()}>
             <SpeechRecognitionRecorder
