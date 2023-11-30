@@ -181,53 +181,6 @@ const SingleMessage: Component<
         <div class={`flex w-full ${opacityClass}`}>
           <div class={`flex h-fit w-full select-text flex-col gap-1`}>
             <div class="break-words">
-              {/* <span
-                class={`float-left pr-3`}
-                style={{ 'min-height': user.ui.imageWrap ? '' : img() }}
-                data-bot-avatar={isBot}
-                data-user-avatar={isUser}
-              >
-                <Switch>
-                  <Match when={props.msg.event === 'world'}>
-                    <div
-                      class={`avatar-${format().size} flex shrink-0 items-center justify-center pt-3`}
-                    >
-                      <Zap />
-                    </div>
-                  </Match>
-
-                  <Match when={voice.status === 'generating'}>
-                    <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
-                      <AvatarIcon format={format()} Icon={DownloadCloud} />
-                    </div>
-                  </Match>
-
-                  <Match when={voice.status === 'playing'}>
-                    <div class="animate-pulse cursor-pointer" onClick={msgStore.stopSpeech}>
-                      <AvatarIcon format={format()} Icon={PauseCircle} />
-                    </div>
-                  </Match>
-
-                  <Match when={ctx.allBots[props.msg.characterId!]}>
-                    <CharacterAvatar
-                      char={ctx.allBots[props.msg.characterId!]}
-                      format={format()}
-                      openable
-                      bot
-                      zoom={1.75}
-                    />
-                  </Match>
-
-                  <Match when={!props.msg.characterId}>
-                    <AvatarIcon
-                      format={format()}
-                      Icon={DownloadCloud}
-                      avatarUrl={state.memberIds[props.msg.userId!]?.avatar}
-                      anonymize={ctx.anonymize}
-                    />
-                  </Match>
-                </Switch>
-              </span> */}
               <span class="flex flex-row justify-between pb-1">
                 <span
                   class={`flex min-w-0 shrink flex-col items-start gap-1 overflow-hidden`}

@@ -198,20 +198,9 @@ const ChatDetail: Component = () => {
     })
   })
 
-  const setModal = (modal: ChatModal) => {
-    setShowOpts(false)
-    chatStore.option('modal', modal)
-  }
-
   const clearModal = () => {
     setShowOpts(false)
     chatStore.option('modal', 'none')
-  }
-
-  const togglePane = (paneType: ChatRightPane) => {
-    setShowOpts(false)
-    chatStore.option('pane', chats.opts.pane === paneType ? undefined : paneType)
-    setSearch({ pane: paneType })
   }
 
   const clickSwipe = (dir: -1 | 1) => () => {
@@ -233,17 +222,6 @@ const ChatDetail: Component = () => {
 
     // express.classify(opts.preset, msgs.inference.text)
     msgStore.clearLastInference()
-  })
-
-  const adapterLabel = createMemo(() => {
-    if (!ctx.info) return ''
-
-    const { name, adapter, isThirdParty, presetLabel } = ctx.info
-
-    const label = `${ADAPTER_LABELS[adapter]}${isThirdParty ? ' (3rd party)' : ''} - ${
-      name || presetLabel
-    }`
-    return label
   })
 
   createEffect(() => {
@@ -416,50 +394,7 @@ const ChatDetail: Component = () => {
                 <p class="text-gray-900 text-3xl font-bold">{chats.char?.name}</p>
               </div>
             </header>
-            {/* <header
-              class={`hidden h-9 items-center justify-between rounded-md sm:flex`}
-              style={headerBg()}
-            >
-              <div class="flex items-center">
-                <div class="mr-2">
-                  <AvatarIcon
-                    format={{ corners: 'circle', size: 'md' }}
-                    avatarUrl={chats.char?.avatar!}
-                  />
-                </div>
-                <div class="ellipsis flex flex-col">
-                  <span class="overflow-hidden whitespace-nowrap leading-5 text-xl font-bold">
-                    {chats.char?.name}
-                  </span>
-                </div>
-              </div>
-
-               <div class="flex flex-row gap-3">
-                <div class="hidden items-center text-xs italic text-[var(--text-500)] sm:flex">
-                  {isOwner() ? adapterLabel() : ''}
-                </div>
-
-                <div class="" onClick={() => setShowOpts(true)}>
-                
-                  <Settings class="icon-button" />
-                  <DropMenu
-                    show={showOpts()}
-                    close={() => setShowOpts(false)}
-                    horz="left"
-                    vert="down"
-                  >
-                    <ChatOptions
-                      adapterLabel={adapterLabel()}
-                      setModal={setModal}
-                      togglePane={togglePane}
-                      close={() => {
-                        setShowOpts(false)
-                      }}
-                    />
-                  </DropMenu>
-                </div>
-              </div> 
-            </header> */}
+            
             <section
               class={`max-w-7xl m-auto w-full h-full gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
               style={contentStyles()}

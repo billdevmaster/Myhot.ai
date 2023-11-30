@@ -5,18 +5,6 @@ import { errors, handle } from '../wrap'
 import { unserialize } from 'php-serialize'
 import { createFEAccessToken } from '/srv/db/user'
 import axios from 'axios'
-import fs from 'fs/promises'
-import { config } from '/srv/config'
-
-export const getCharacterChats = handle(async (req) => {
-  const character = await store.characters.getCharacter(req.userId!, req.params.id)
-  if (!character) {
-    throw errors.NotFound
-  }
-
-  const list = await store.chats.listByCharacter(req.userId, req.params.id)
-  return { character, chats: list }
-})
 
 export const getChatDetail = handle(async ({ userId, params }) => {
   const id = params.id

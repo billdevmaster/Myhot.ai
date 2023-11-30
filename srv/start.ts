@@ -58,7 +58,7 @@ async function initDb() {
   }
 
   const db = await connect()
-  const mysqlDB = await mysqlConnect()
+  await mysqlConnect()
   if (db) {
     await createIndexes()
     await setupDomain()

@@ -1,7 +1,7 @@
 {
-  "name": "agnai",
+  "name": "myhotai",
   "version": "1.0.27",
-  "description": "Agnostic AI Chat",
+  "description": "Myhot AI Chat",
   "keywords": [],
   "license": "AGPL-3.0",
   "bin": {
@@ -11,7 +11,7 @@
   "engines": {
     "node": "18.x"
   },
-  "homepage": "https://github.com/agnaistic/agnai/issues",
+  "homepage": "",
   "files": [
     "poetry.lock",
     "pyproject.toml",

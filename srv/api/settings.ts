@@ -21,12 +21,6 @@ const getSettings = handle(async () => {
   return config
 })
 
-export const getPublicSubscriptions = handle(async () => {
-  const subscriptions = store.subs.getCachedSubscriptions()
-  return { subscriptions }
-})
-
-router.get('/subscriptions', getPublicSubscriptions)
 router.get('/', getSettings)
 
 export default router

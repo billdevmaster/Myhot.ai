@@ -242,7 +242,7 @@ export const SpeechRecognitionRecorder: Component<{
           onClick={toggleListening}
           size="sm"
         >
-          <img src={MicImg} alt="" class="w-[35px]" />
+          <img src={MicImg} alt="" class="w-[37px]" />
         </Button>
       </Show>
     </>

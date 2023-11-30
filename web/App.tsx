@@ -84,7 +84,6 @@ const Layout: Component = () => {
       <div class="scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-[var(--hl-900)] app flex flex-col justify-between bg-gray-200">
         {/* <NavBar /> */}
         <div class="flex w-full grow flex-row overflow-y-hidden">
-          {/* <Navigation /> */}
           <div class="w-full overflow-y-auto" data-background style={bg()}>
             <div
               class={`mx-auto h-full min-h-full ${isChat() ? maxW() : 'max-w-8xl'}`}

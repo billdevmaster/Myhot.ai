@@ -16,12 +16,6 @@ import { getCountVoiceMessages } from '/srv/db/voiceMessages'
 
 type GenRequest = UnwrapBody<typeof genValidator>
 
-const sendValidator = {
-  kind: ['send-noreply', 'ooc'],
-  text: 'string',
-  impersonate: 'any?',
-} as const
-
 const genValidator = {
   parent: 'string?',
   kind: [
@@ -65,59 +59,12 @@ const genValidator = {
   userEmbeds: 'any?',
 } as const
 
-export const getMessages = handle(async ({ userId, params, query }) => {
-  const chatId = params.id
-
-  assertValid({ before: 'string' }, query)
-  const before = query.before
-
-  const messages = await store.msgs.getMessages(chatId, before)
-  return { messages }
-})
-
 export const countVoiceMessages = handle(async (req) => {
   const chatId = req.params.id
   const count = await getCountVoiceMessages(chatId);
   return {count}
 })
 
-export const createMessage = handle(async (req) => {
-  const { userId, body, params } = req
-  const chatId = params.id
-  assertValid(sendValidator, body)
-
-  const impersonate: AppSchema.Character | undefined = body.impersonate
-
-  if (!userId) {
-    const guest = req.socketId
-    const newMsg = newMessage(v4(), chatId, body.text, {
-      userId: impersonate ? undefined : 'anon',
-      characterId: impersonate?._id,
-      ooc: body.kind === 'ooc',
-      event: undefined,
-    })
-    sendGuest(guest, { type: 'message-created', msg: newMsg, chatId })
-  } else {
-    const chat = await store.chats.getChatOnly(chatId)
-    if (!chat) throw errors.NotFound
-    const members = chat.memberIds.concat(chat.userId)
-
-    await ensureBotMembership(chat, members, impersonate)
-
-    const userMsg = await store.msgs.createChatMessage({
-      chatId,
-      message: body.text,
-      characterId: impersonate?._id,
-      senderId: userId,
-      ooc: body.kind === 'ooc',
-      event: undefined,
-    })
-
-    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
-  }
-
-  return { success: true }
-})
 
 export const generateMessageV2 = handle(async (req, res) => {
   const { userId, body, params, log } = req
