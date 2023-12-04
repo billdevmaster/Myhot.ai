@@ -95,7 +95,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   // check the credits.
   let query = `SELECT * FROM AI WHERE ID=${replyAs.characterId}`;
   const AI: any = await getMysqlQueryResult(query);
-  if (AI[0].is_paid == 'paid') {
+  if (AI[0].payment_enabled == 'yes') {
     let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM myhot.credits where userId=${chat.userId} and characterId=${replyAs.characterId};`;
     const credit: any = await getMysqlQueryResult(query);
     const textCredit = credit[0].text_credit;
