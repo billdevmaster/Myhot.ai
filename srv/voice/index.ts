@@ -110,7 +110,7 @@ export async function generateVoice(
     let query = `SELECT * FROM AI WHERE ID=${character?.characterId}`;
     const AI: any = await getMysqlQueryResult(query);
     if (AI[0].payment_enabled == 'yes') { 
-      let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM myhot.credits where userId=${chatData?.chat.userId} and characterId=${character?.characterId};`;
+      let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM credits where userId=${chatData?.chat.userId} and characterId=${character?.characterId};`;
       const credit: any = await getMysqlQueryResult(query);
       const voiceCredit = credit[0].voice_credit;
       const voiceMessageCount = await getCountVoiceMessages(chatData.chat._id);

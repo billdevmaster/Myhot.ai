@@ -96,7 +96,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   let query = `SELECT * FROM AI WHERE ID=${replyAs.characterId}`;
   const AI: any = await getMysqlQueryResult(query);
   if (AI[0].payment_enabled == 'yes') {
-    let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM myhot.credits where userId=${chat.userId} and characterId=${replyAs.characterId};`;
+    let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM credits where userId=${chat.userId} and characterId=${replyAs.characterId};`;
     const credit: any = await getMysqlQueryResult(query);
     const textCredit = credit[0].text_credit;
     const textMessageCount = await getCountTextMessages(chat._id);
@@ -148,7 +148,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       })
     }
 
-    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
+    sendOne(userId, { type: 'message-created', msg: userMsg, chatId })
   } else if (body.kind.startsWith('send-event:')) {
     userMsg = await store.msgs.createChatMessage({
       chatId,
@@ -158,7 +158,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       ooc: false,
       event: body.kind.split(':')[1] as AppSchema.EventTypes,
     })
-    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
+    sendOne(userId, { type: 'message-created', msg: userMsg, chatId })
   }
 
   if (body.kind === 'ooc' || !replyAs) {
@@ -350,7 +350,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
       await addTextMessages(chatId, msg.msg);
 
-      sendMany(members, {
+      sendOne(userId, {
         type: 'message-created',
         requestId,
         msg,
@@ -371,7 +371,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           state: 'retried',
         })
-        sendMany(members, {
+        sendOne(userId, {
           type: 'message-retry',
           requestId,
           chatId,
@@ -394,7 +394,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           event: undefined,
         })
-        sendMany(members, {
+        sendOne(userId, {
           type: 'message-created',
           requestId,
           msg,
