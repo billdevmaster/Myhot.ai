@@ -20,7 +20,8 @@ import { AppSchema } from '../../common/types/schema'
 import { addConnects, getVoiceGenerators, removeConnects } from '../db/voiceGenerator'
 import { getChat } from '../db/chats'
 import { getCharacter } from '../db/characters'
-import { addVoiceMessages } from '../db/voiceMessages'
+import { addVoiceMessages, getCountVoiceMessages } from '../db/voiceMessages'
+import { getMysqlQueryResult } from '../db/client'
 
 export async function getVoicesList(
   { user, ttsService }: VoicesListRequest,
@@ -77,9 +78,6 @@ export async function generateVoice(
   log: AppLog,
   guestId?: string
 ) {
-  const service = getVoiceService(voice.service)
-  if (!service) return { output: undefined }
-
   const broadcastIds: string[] = []
 
   if (!guestId) {
@@ -87,10 +85,12 @@ export async function generateVoice(
     const members = await store.chats.getActiveMembers(chatId)
     broadcastIds.push(...members, user._id)
   }
-
+  let error: any
+  
+  
+  
   let audio: TextToSpeechAdapterResponse | undefined
   let output: string = ''
-  let error: any
   const text = processText(opts.text, user.texttospeech?.filterActions ?? true)
   log.debug({ text, service: voice.service }, 'Text to speech')
 
@@ -100,13 +100,44 @@ export async function generateVoice(
   } else if (guestId) {
     sendGuest(guestId, generatingMessage)
   }
+  
+  const chatData = await getChat(chatId)
+  let character = null
 
-  // try {
-  //   audio = await service.generateVoice({ user, text, voice }, log, guestId)
-  // } catch (ex: any) {
-  //   error = ex.message || ex
-  //   log.error({ err: ex }, 'Failed to generate audio')
-  // }
+  if (chatData?.chat.characterId) {
+    character = await getCharacter("", chatData?.chat.characterId)
+    console.log(chatData?.chat.userId, character?.characterId)
+    let query = `SELECT * FROM AI WHERE ID=${character?.characterId}`;
+    const AI: any = await getMysqlQueryResult(query);
+    if (AI[0].payment_enabled == 'yes') { 
+      let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM myhot.credits where userId=${chatData?.chat.userId} and characterId=${character?.characterId};`;
+      const credit: any = await getMysqlQueryResult(query);
+      const voiceCredit = credit[0].voice_credit;
+      const voiceMessageCount = await getCountVoiceMessages(chatData.chat._id);
+      if (voiceMessageCount >= voiceCredit) { 
+        error = `Your voice credit is not enough`
+        send(broadcastIds, guestId, {
+          type: 'voice-failed',
+          chatId,
+          messageId,
+          error,
+        })
+        return { output: undefined }
+      }
+    }
+  } else {
+    error = `Something is wrong`
+    send(broadcastIds, guestId, {
+      type: 'voice-failed',
+      chatId,
+      messageId,
+      error,
+    })
+    return { output: undefined }
+  }
+  const service = getVoiceService(voice.service)
+  if (!service) return { output: undefined }
+  
   const voiceGenerator = await getVoiceGenerators();
   if (!voiceGenerator) {
     error = `Too many voice generating connects`
@@ -118,12 +149,11 @@ export async function generateVoice(
     })
     return { output: undefined }
   }
-  const chatData = await getChat(chatId)
+  
   let voiceSample: string;
 
-  if (chatData?.chat.characterId) {
-    const character = await getCharacter("", chatData?.chat.characterId)
-    voiceSample = character?.voiceSample ? character?.voiceSample : "my.mp3"
+  if (character) {
+    voiceSample = character.voiceSample ? character.voiceSample : "my.mp3"
   } else {
     voiceSample = "my.mp3"
   }
