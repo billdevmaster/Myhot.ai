@@ -16,6 +16,7 @@ import { msgStore, toastStore, userStore } from '../../../store'
 import { AppSchema } from '../../../../common/types/schema'
 import { createDebounce } from '/web/shared/util'
 import MicImg from '../../../asset/mic.png'
+import MicOnImg from '../../../asset/mic-on.png'
 
 const win: any = window
 
@@ -238,11 +239,11 @@ export const SpeechRecognitionRecorder: Component<{
       <Show when={speechRecognition() && settings.enabled}>
         <Button
           schema="clear"
-          class={`${isListening() ? 'text-red-500' : 'text-gray-500'}`}
           onClick={toggleListening}
           size="sm"
         >
-          <img src={MicImg} alt="" class="w-[37px]" />
+          {!isListening() && (<span class="w-[32px]"><img src={MicImg} alt="" /></span>)}
+          {isListening() && (<span class="w-[32px]"><img src={MicOnImg} alt="" class="w-[28px]" /></span>)}
         </Button>
       </Show>
     </>
