@@ -25,6 +25,7 @@ export type AllDoc =
   | AppSchema.ChatLock
   | AppSchema.VoiceGenerator
   | AppSchema.VoiceMessages
+  | AppSchema.TextMessages
   | AppSchema.ChatMember
   | AppSchema.ChatInvite
   | AppSchema.UserGenPreset
@@ -276,6 +277,13 @@ export namespace AppSchema {
   export interface VoiceMessages {
     _id: string
     kind: 'voice-messages'
+    chatId: string
+    text: string
+  }
+
+  export interface TextMessages {
+    _id: string
+    kind: 'text-messages'
     chatId: string
     text: string
   }

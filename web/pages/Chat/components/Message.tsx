@@ -171,7 +171,7 @@ const SingleMessage: Component<
         </Match>
       </Switch>
       <div
-        class={`flex rounded-md px-2 py-2 pr-2 sm:px-4 ${ctx.allBots[props.msg.characterId!] ? 'bg-gradient-to-r from-gray-400 to-gray-300' : ''} ${!props.msg.characterId ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : ''} `}
+        class={`flex max-w-[80%] rounded-md px-2 py-2 pr-2 sm:px-4 ${ctx.allBots[props.msg.characterId!] ? 'bg-gradient-to-r from-gray-400 to-gray-300' : ''} ${!props.msg.characterId ? 'bg-gradient-to-r from-cyan-500 to-blue-500' : ''} `}
         data-sender={props.msg.characterId ? 'bot' : 'user'}
         data-bot={props.msg.characterId ? ctx.char?.name : ''}
         data-user={props.msg.userId ? state.memberIds[props.msg.userId]?.handle : ''}

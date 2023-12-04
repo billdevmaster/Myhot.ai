@@ -402,10 +402,10 @@ const ChatDetail: Component = () => {
               <section class="flex h-full w-full flex-col justify-between gap-2">
                 <div class="flex overflow-y-auto h-full">
                   <div class="mr-2">
-                    <AvatarIcon
+                    {/* <AvatarIcon
                       format={{ corners: 'lg', size: '3xl' }}
                       avatarUrl={chats.char?.avatar!}
-                    />
+                    /> */}
                   </div>
                   <div class="flex w-full flex-col justify-end gap-2 overflow-y-auto">
                     <div

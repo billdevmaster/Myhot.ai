@@ -13,6 +13,8 @@ import { cyoaTemplate } from '/common/mode-templates'
 import { fillPromptWithLines } from '/common/prompt'
 import { getTokenCounter } from '/srv/tokenize'
 import { getCountVoiceMessages } from '/srv/db/voiceMessages'
+import { getMysqlQueryResult } from '/srv/db/client'
+import { addTextMessages, getCountTextMessages } from '/srv/db/textMessages'
 
 type GenRequest = UnwrapBody<typeof genValidator>
 
@@ -79,6 +81,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   body.user = user
 
   const chat = await store.chats.getChatOnly(chatId)
+
   if (!chat) throw errors.NotFound
   if (body.kind === 'request' && chat.userId !== userId) {
     throw errors.Forbidden
@@ -88,12 +91,32 @@ export const generateMessageV2 = handle(async (req, res) => {
   const replyAs = body.replyAs._id.startsWith('temp-')
     ? body.replyAs
     : await store.characters.getCharacter(chat.userId, body.replyAs._id || body.char._id)
+  const members = chat.memberIds.concat(chat.userId)
+  // check the credits.
+  let query = `SELECT * FROM AI WHERE ID=${replyAs.characterId}`;
+  const AI: any = await getMysqlQueryResult(query);
+  if (AI[0].is_paid == 'paid') {
+    let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM myhot.credits where userId=${chat.userId} and characterId=${replyAs.characterId};`;
+    const credit: any = await getMysqlQueryResult(query);
+    const textCredit = credit[0].text_credit;
+    const textMessageCount = await getCountTextMessages(chat._id);
+    if (textMessageCount >= textCredit) {
+      sendMany(members, {
+        type: 'message-error',
+        requestId,
+        error: `Your credit is not enough`,
+        chatId,
+      })
+      await releaseLock(chatId)
+      return
+    }
+  }
 
   if (chat.userId !== userId) {
     const isAllowed = await store.chats.canViewChat(userId, chat)
     if (!isAllowed) throw errors.Forbidden
   }
-  const members = chat.memberIds.concat(chat.userId)
+  
 
   if (body.kind === 'retry' && userId !== chat.userId) {
     throw errors.Forbidden
@@ -324,6 +347,8 @@ export const generateMessageV2 = handle(async (req, res) => {
           messageId: msg._id,
         })
       }
+
+      await addTextMessages(chatId, msg.msg);
 
       sendMany(members, {
         type: 'message-created',
