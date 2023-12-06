@@ -52,7 +52,7 @@ function getCharacterIds(chats: Document[]) {
 }
 
 export const getChat = handle(async (req) => {
-  const clientIP = req.ip || req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  const clientIP = req.headers['X-Real-IP'];
   console.log('Client IP Address:', clientIP);
   const userId = req.body.userId
   const charId = req.body.charId
