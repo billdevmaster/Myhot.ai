@@ -52,6 +52,8 @@ function getCharacterIds(chats: Document[]) {
 }
 
 export const getChat = handle(async (req) => {
+  const ipAddress = req.socket.remoteAddress;
+  console.log(ipAddress)
   const userId = req.body.userId
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
