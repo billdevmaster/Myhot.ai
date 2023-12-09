@@ -83,13 +83,14 @@ export const SpeechRecognitionRecorder: Component<{
     try {
       // await window.navigator.mediaDevices.getUserMedia({ video: false, audio: true })
       const Speech = getSpeechRecognition()
-      if (!Speech) return
+      if (!Speech) {
+        return toastStore.error(`This browser doesn't support Speech Recogniction`)
+      }
       speech = new Speech()
     } catch (e: any) {
       toastStore.error(`Could not initialize speech recognition: ${e.message}`)
       return
     }
-
     speech.continuous = true
     speech.interimResults = true
     speech.lang = props.culture ?? defaultCulture
@@ -138,7 +139,6 @@ export const SpeechRecognitionRecorder: Component<{
 
       // props.onText(value)
     })
-
     setSpeechRecognition(speech)
   })
 
@@ -222,6 +222,7 @@ export const SpeechRecognitionRecorder: Component<{
   const toggleListening = () => {
     const listening = isListening()
     const speech = speechRecognition()
+    console.log(speech)
     setPendingRecord(false)
     if (!speech) return
     props.listening(true)
