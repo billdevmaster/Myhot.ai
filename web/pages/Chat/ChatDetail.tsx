@@ -12,7 +12,7 @@ import {
   Switch,
 } from 'solid-js'
 import { A, useNavigate, useParams, useSearchParams } from '@solidjs/router'
-import { ArrowDownLeft, ArrowUpRight, ChevronLeft, Settings, VenetianMask } from 'lucide-solid'
+import { ArrowDownLeft, ArrowUpRight, ChevronLeft, Settings, VenetianMask, AlertTriangle } from 'lucide-solid'
 import ChatExport from './ChatExport'
 import { ADAPTER_LABELS } from '../../../common/adapters'
 import Button from '../../shared/Button'
@@ -46,6 +46,8 @@ import Slot from '/web/shared/Slot'
 import { useAppContext } from '/web/store/context'
 import AvatarIcon from '/web/shared/AvatarIcon'
 import LogoIcon from '/web/icons/LogoIcon'
+import { ConfirmModal } from '/web/shared/Modal'
+import { TitleCard } from '/web/shared/Card'
 
 const ChatDetail: Component = () => {
   const { updateTitle } = setComponentPageTitle('Chat')
@@ -129,6 +131,7 @@ const ChatDetail: Component = () => {
   const [showOpts, setShowOpts] = createSignal(false)
   const [ooc, setOoc] = createSignal<boolean>()
   const [showHiddenEvents, setShowHiddenEvents] = createSignal(false)
+  const [restart, setRestart] = createSignal(false)
 
   const chatMsgs = createMemo(() => {
     const messages = msgs.msgs
@@ -406,6 +409,12 @@ const ChatDetail: Component = () => {
                       format={{ corners: 'lg', size: '3xl' }}
                       avatarUrl={chats.char?.avatar!}
                     />
+                    <div class="w-full flex justify-center mt-5">
+                      <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full flex gap-2" onClick={() => setRestart(true)}>
+                        <AlertTriangle /> Restart Chat <AlertTriangle />
+                        {/* Restart Chat */}
+                      </button>
+                    </div>
                   </div>
                   <div class="flex w-full flex-col justify-end gap-2 overflow-y-auto">
                     <div
@@ -585,6 +594,20 @@ const ChatDetail: Component = () => {
       </Show>
 
       <PromptModal />
+
+      <ConfirmModal
+        message={
+          <TitleCard type="rose" class="flex flex-col gap-4">
+            <div class="flex justify-center font-bold">Are you sure?</div>
+            <div>This will delete ALL messages in this conversation.</div>
+          </TitleCard>
+        }
+        show={restart()}
+        close={() => setRestart(false)}
+        confirm={() => {
+          chatStore.restartChat(chats.chat!._id)
+        }}
+      />
     </>
   )
 }

@@ -37,25 +37,6 @@ export async function getChat(id: string) {
     return res
   }
   return null
-  // const allChars = await loadItem('characters')
-  // const chat = await loadItem('chats').then((res) => res.find((ch) => ch._id === id))
-  // const character = allChars.find((ch) => ch._id === chat?.characterId)
-
-  // const profile = await loadItem('profile')
-  // const messages = await localApi.getMessages(id)
-
-  // if (!chat) {
-  //   return localApi.error(`Chat not found in data`)
-  // }
-
-  // const charIds = new Set(Object.keys(chat?.characters || {}).concat(chat?.characterId))
-  // const characters = allChars.filter((ch) => ch._id === chat?.characterId || charIds.has(ch._id))
-
-  // if (!character) {
-  //   return localApi.error(`Character not found in data`)
-  // }
-
-  // return localApi.result({ chat, character, messages, members: [profile], active: [], characters })
 }
 
 export async function restartChat(chatId: string) {

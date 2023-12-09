@@ -47,7 +47,7 @@ const Modal: Component<Props> = (props) => {
           <form
             ref={ref}
             onSubmit={props.onSubmit || defaultSubmit}
-            class={`modal-height bg-900 z-50 my-auto w-[calc(100vw-16px)] overflow-hidden rounded-lg shadow-md shadow-black transition-all ${width()} `}
+            class={`modal-height bg-gray-500 z-50 my-auto w-[calc(100vw-16px)] overflow-hidden rounded-lg shadow-md shadow-black transition-all ${width()} `}
           >
             <Switch>
               <Match when={props.tabs}>

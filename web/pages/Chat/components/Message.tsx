@@ -402,7 +402,7 @@ const MessageOptions: Component<{
 }> = (props) => {
   return (
     <div class="flex items-center gap-3 text-sm">
-      <Show when={true}>
+      <Show when={false}>
         <div
           onClick={() => !props.partial && chatStore.showPrompt(props.original)}
           class="icon-button prompt-btn"
