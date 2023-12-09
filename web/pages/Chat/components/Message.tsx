@@ -425,10 +425,7 @@ const MessageOptions: Component<{
       </Show>
 
       <Show
-        when={
-          (props.last || (props.msg.adapter === 'image' && props.msg.imagePrompt)) &&
-          props.msg.characterId
-        }
+        when={false}
       >
         <div
           class="icon-button refresh-btn"

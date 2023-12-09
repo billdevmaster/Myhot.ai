@@ -4,8 +4,7 @@
 }
 
 em {
-  color: var(--text-600);
-  color: var(--text-emphasis-color);
+  color: var(--text-400);
 }
 
 .rendered-markdown q {

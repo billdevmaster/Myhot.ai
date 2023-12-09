@@ -61,6 +61,16 @@ const genValidator = {
   userEmbeds: 'any?',
 } as const
 
+export const getMessages = handle(async ({ userId, params, query }) => {
+  const chatId = params.id
+
+  assertValid({ before: 'string' }, query)
+  const before = query.before
+
+  const messages = await store.msgs.getMessages(chatId, before)
+  return { messages }
+})
+
 export const countVoiceMessages = handle(async (req) => {
   const chatId = req.params.id
   const count = await getCountVoiceMessages(chatId);

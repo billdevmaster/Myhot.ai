@@ -252,7 +252,7 @@ export const chatStore = createStore<ChatState>('chat', {
           res.result.characters,
           Object.values(res.result.chat.tempCharacters || {})
         )
-
+        console.log(res.result.members.reduce(toMemberKeys, {}))
         yield {
           lastChatId: id,
           active: {
@@ -262,7 +262,7 @@ export const chatStore = createStore<ChatState>('chat', {
             replyAs: isMultiChars ? undefined : res.result.character._id,
           },
           chatProfiles: res.result.members,
-          memberIds: res.result.members.reduce(toMemberKeys, {}),
+          memberIds: res.result.members.reduce(toMemberKeys, {})
         }
       }
     },
