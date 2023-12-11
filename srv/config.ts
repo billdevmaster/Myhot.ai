@@ -139,7 +139,8 @@ export const config = {
   oaiKey: env('OPENAI_KEY', ''),
   novelaiKey: env('NOVELAI_KEY', ''),
   hordeKey: env('HORDE_KEY', ''),
-  selfHostUrl: env('SELF_HOST_URL', '')
+  selfHostUrl: env('SELF_HOST_URL', ''),
+  uploadSampleUrl: env('UPLOAD_SAMPLE_URL', '')
 }
 
 insertInject()

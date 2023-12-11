@@ -5,6 +5,7 @@ import { errors, handle } from '../wrap'
 import { unserialize } from 'php-serialize'
 import { createFEAccessToken } from '/srv/db/user'
 import axios from 'axios'
+import { config } from '/srv/config'
 
 export const getChatDetail = handle(async ({ userId, params }) => {
   const id = params.id
@@ -53,17 +54,27 @@ function getCharacterIds(chats: Document[]) {
 
 export const getChat = handle(async (req) => {
   const clientIP = req.headers['x-real-ip'];
-  console.log('Client IP Address:', clientIP);
   const userId = req.body.userId
   const charId = req.body.charId
   const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
   const character: any = await getMysqlQueryResult(`SELECT * from AI where ID=${charId}`)
-
-  
-
+  let chatSession: any = [];
   if (!user || !character) {
-    return {success: false}
+    return {success: false, msg: "User or Model is not correct"}
   }
+
+  // check the client ipaddress
+  if (clientIP) {
+    if (user.login_status != "1") {
+      return {success: false, msg: "You are logout"}
+    }
+    let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} and ip=${clientIP}`;
+    chatSession = await getMysqlQueryResult(query);
+    if (chatSession.length == 0) {
+      return {success: false, msg: "Your Ipaddress is wrong"}
+    }
+  }
+
   let moods = "";
   if (character[0].moods.length > 0) {
     const moodsencoded = Buffer.from(character[0].moods, 'base64')
@@ -119,7 +130,7 @@ export const getChat = handle(async (req) => {
       const fileName = character[0].voice_sample.split(".")[0];
       formData.append('file', file, fileName + ".mp3");
       try {
-        const ret: any = await axios.post('https://components-contemporary-pleasure-searched.trycloudflare.com/upload', formData, {
+        const ret: any = await axios.post(`${config.uploadSampleUrl}upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
@@ -141,7 +152,7 @@ export const getChat = handle(async (req) => {
         const formData = new FormData();
         formData.append('file', file, fileName + ".mp3");
         try {
-          const ret: any = await axios.post('https://components-contemporary-pleasure-searched.trycloudflare.com/upload', formData, {
+          const ret: any = await axios.post(`${config.uploadSampleUrl}upload`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             },
@@ -164,25 +175,27 @@ export const getChat = handle(async (req) => {
   const chatInfo: any = {
     characterId: char._id,
     name: 'Chat',
-    // genPreset: 'd4d0b94e-a794-4589-98d5-4502a8d1e309', //chat gpt
-    // genPreset: '4e7a86d7-2d94-4aa2-b6eb-63dbda798f6a', // novel ai
-    // genPreset: '8c5813e0-875a-4f04-b7b9-973238feb79b', //horde
-    genPreset: 'a7aceeec-5e55-4135-90ce-549aebcf3657', //self
+    genPreset: 'a7aceeec-5e55-4135-90ce-549aebcf3657',
     elevenKey: user[0].elevenKey ? user[0].elevenKey : null
   }
-  const oldchat = await store.chats.getChatByUserAndChar(userId, char._id)
+  const oldchat: any = await store.chats.getChatByUserAndChar(userId, char._id)
   let chat: any = null
-  if (!oldchat) {
-    chat = await store.chats.create(char._id, {
-      ...chatInfo,
-      userId: userId,
-    })
-  } else {
+  if (oldchat) {
     chat = await store.chats.update(oldchat._id, {
       ...chatInfo,
       userId: userId,
     })
+  } else {
+    chat = await store.chats.create(char._id, {
+      ...chatInfo,
+      userId: userId,
+    })
   }
+  if (chatSession.length > 0) {
+    const query = `Update chat_session set chat_url=${chat._id} where ${chatSession[0].id}`
+    await getMysqlQueryResult(query)
+  }
+
   const token = await createFEAccessToken(`${user[0].Fname} ${user[0].Lname}`, userId)
   return { success: true, token, chat }
 })

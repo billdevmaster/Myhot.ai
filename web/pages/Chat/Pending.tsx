@@ -5,6 +5,7 @@ import {
 import { useParams } from '@solidjs/router'
 import { api } from "/web/store/api"
 import { setAuth } from "/web/store/api"
+import { toastStore } from "/web/store"
 
 const Pending = () => {
   const params = useParams()
@@ -14,6 +15,8 @@ const Pending = () => {
       if (res.result.success) {
         setAuth(res.result.token)
         window.location.href = `/chat/${res.result.chat._id}`
+      } else {
+        toastStore.error(res.result.msg)
       }
     }
     getChat();

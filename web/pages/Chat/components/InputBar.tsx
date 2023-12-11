@@ -1,4 +1,4 @@
-import { ImagePlus, Megaphone, MoreHorizontal, PlusCircle, Send, Zap } from 'lucide-solid'
+import { ImagePlus, Megaphone, PlusCircle, Send, Zap } from 'lucide-solid'
 import {
   Component,
   createEffect,

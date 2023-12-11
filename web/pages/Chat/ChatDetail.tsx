@@ -11,22 +11,19 @@ import {
   Show,
   Switch,
 } from 'solid-js'
-import { A, useNavigate, useParams, useSearchParams } from '@solidjs/router'
-import { ArrowDownLeft, ArrowUpRight, ChevronLeft, Settings, VenetianMask, AlertTriangle } from 'lucide-solid'
+import { useNavigate, useParams } from '@solidjs/router'
+import { VenetianMask, AlertTriangle } from 'lucide-solid'
 import ChatExport from './ChatExport'
-import { ADAPTER_LABELS } from '../../../common/adapters'
 import Button from '../../shared/Button'
 import { CharacterPill } from '../../shared/CharacterPill'
 import { getMaxChatWidth, setComponentPageTitle } from '../../shared/util'
-import { characterStore, ChatRightPane, chatStore, settingStore, userStore } from '../../store'
+import { characterStore, chatStore, settingStore, userStore } from '../../store'
 import { msgStore } from '../../store'
 import InputBar from './components/InputBar'
 import Message from './components/Message'
 import PromptModal from './components/PromptModal'
 import DeleteMsgModal from './DeleteMsgModal'
-import { DropMenu } from '../../shared/DropMenu'
 import { devCycleAvatarSettings, isDevCommand } from './dev-util'
-import ChatOptions, { ChatModal } from './ChatOptions'
 import ForcePresetModal from './ForcePreset'
 import DeleteChatModal from './components/DeleteChat'
 import { cycleArray } from '/common/util'
@@ -34,7 +31,6 @@ import { useEffect, usePane, useResizeObserver } from '/web/shared/hooks'
 import {
   emptyMsg,
   getChatWidth,
-  getHeaderBg,
   InfiniteScroll,
   insertImageMessages,
   SwipeMessage,
@@ -56,10 +52,8 @@ const ChatDetail: Component = () => {
   let slotContainer: HTMLDivElement
 
   const params = useParams()
-  const [, setSearch] = useSearchParams()
   const nav = useNavigate()
   const user = userStore()
-  const cfg = settingStore()
   const chars = characterStore((s) => ({
     chatBots: s.characters.list,
     botMap: s.characters.map,
@@ -128,7 +122,6 @@ const ChatDetail: Component = () => {
 
   const [swipe, setSwipe] = createSignal(0)
   const [removeId, setRemoveId] = createSignal('')
-  const [showOpts, setShowOpts] = createSignal(false)
   const [ooc, setOoc] = createSignal<boolean>()
   const [showHiddenEvents, setShowHiddenEvents] = createSignal(false)
   const [restart, setRestart] = createSignal(false)
@@ -158,35 +151,11 @@ const ChatDetail: Component = () => {
     }
   })
 
-  const descriptionText = createMemo(() => {
-    if (!chats.char?.description) return null
-
-    return (
-      <>
-        {chats.char!.description!.split('\n').map((line) => (
-          <div>{line}</div>
-        ))}
-      </>
-    )
-  })
   const isOwner = createMemo(() => chats.chat?.userId === user.user?._id)
-  const headerBg = createMemo(() => getHeaderBg(user.ui.mode))
   const chatWidth = createMemo(() =>
     getChatWidth(user.ui.chatWidth, !!chats.opts.pane && isPaneOrPopup() === 'pane')
   )
   const tts = createMemo(() => (user.user?.texttospeech?.enabled ?? true) && !!chats.char?.voice)
-
-  const isSelfRemoved = createMemo(() => {
-    // if (!user.profile) return false
-    // if (!chats.chat) return false
-    // console.log(chats.chat.userId)
-    // console.log(user.profile.userId)
-    // const isMember =
-    //   chats.chat.userId === user.profile.userId ||
-    //   chats.members.some((mem) => mem.userId === user.profile?.userId)
-
-    return false
-  })
 
   const waitingMsg = createMemo(() => {
     if (!msgs.waiting) return
@@ -202,7 +171,6 @@ const ChatDetail: Component = () => {
   })
 
   const clearModal = () => {
-    setShowOpts(false)
     chatStore.option('modal', 'none')
   }
 
@@ -404,7 +372,7 @@ const ChatDetail: Component = () => {
             >
               <section class="flex h-full w-full flex-col justify-between gap-2">
                 <div class="flex flex-col sm:flex-row overflow-y-auto h-full">
-                  <div class="sm:mr-2 flex flex-row sm:flex-col items-center justify-around">
+                  <div class="sm:mr-2 flex flex-row sm:flex-col items-center justify-around sm:justify-start">
                     <AvatarIcon
                       format={{ corners: 'lg', size: '3xl' }}
                       avatarUrl={chats.char?.avatar!}
@@ -518,11 +486,6 @@ const ChatDetail: Component = () => {
                       </div>
                     </section>
 
-                    <Show when={isSelfRemoved()}>
-                      <div class="flex w-full justify-center">
-                        You have been removed from the conversation
-                      </div>
-                    </Show>
                     <Show when={isOwner() && ctx.activeBots.length > 1}>
                       <div
                         class={`flex min-h-[42px] justify-center gap-2 overflow-x-auto py-1 ${
