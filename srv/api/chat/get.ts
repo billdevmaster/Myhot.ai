@@ -119,7 +119,7 @@ export const getChat = handle(async (req) => {
       const fileName = character[0].voice_sample.split(".")[0];
       formData.append('file', file, fileName + ".mp3");
       try {
-        const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
+        const ret: any = await axios.post('https://components-contemporary-pleasure-searched.trycloudflare.com/upload', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           },
@@ -141,7 +141,7 @@ export const getChat = handle(async (req) => {
         const formData = new FormData();
         formData.append('file', file, fileName + ".mp3");
         try {
-          const ret: any = await axios.post('https://showed-fame-nitrogen-insulin.trycloudflare.com/upload', formData, {
+          const ret: any = await axios.post('https://components-contemporary-pleasure-searched.trycloudflare.com/upload', formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             },

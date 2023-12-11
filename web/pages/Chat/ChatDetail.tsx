@@ -382,7 +382,7 @@ const ChatDetail: Component = () => {
         </div>
       </Show>
       <Show when={chats.chat}>
-        <main class="mx-auto flex w-full justify-between gap-4">
+        <main class="mx-auto flex w-full justify-between gap-4 xs:flex-column">
           <div
             class={`${chatGrid()} gap-1 ${chatMargin()} ${chatWidth()} mx-auto flex flex-col pb-1 xs:flex`}
           >
