@@ -7,24 +7,38 @@ import { createFEAccessToken } from '/srv/db/user'
 import axios from 'axios'
 import { config } from '/srv/config'
 
-export const getChatDetail = handle(async ({ userId, params }) => {
+export const getChatDetail = handle(async ({ headers, userId, params }) => {
+  const clientIP = headers['x-real-ip'];
   const id = params.id
   const detail = await store.chats.getChat(id)
 
   if (!detail) throw errors.NotFound
 
+  
   // const canView = await store.chats.canViewChat(userId, detail.chat)
   // console.log("okay", canView)
   // if (!canView) {
-  //   throw errors.Forbidden
-  // }
-
-  const [members, active] = await Promise.all([
-    store.users.getMysqlProfiles(detail.chat.userId, detail.chat.memberIds),
-    store.chats.getActiveMembers(detail.chat._id),
-  ])
-  const character = detail.characters.find((ch) => ch._id === detail.chat.characterId)
-
+    //   throw errors.Forbidden
+    // }
+    
+    const [members, active] = await Promise.all([
+      store.users.getMysqlProfiles(detail.chat.userId, detail.chat.memberIds),
+      store.chats.getActiveMembers(detail.chat._id),
+    ])
+    const character = detail.characters.find((ch) => ch._id === detail.chat.characterId)
+    // check the client ipaddress
+    if (clientIP) {
+      const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
+      if (!user[0].login_status) {
+        throw errors.Forbidden
+      }
+      let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${character?.characterId} order by timestamp desc limit 1`;
+      const chatSession: any = await getMysqlQueryResult(query);
+      if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
+        throw errors.Forbidden
+      }
+    }
+    
   const messages = await store.msgs.getChatMessages(detail.chat)
   // await store.chats.createChatTree(detail.chat)
 

@@ -230,7 +230,7 @@ export const chatStore = createStore<ChatState>('chat', {
 
       yield { loaded: true }
       if (!res) return
-      if (res.error) toastStore.error(`Failed to retrieve conversation: ${res.error}`)
+      if (res.error) return toastStore.error(`Failed to retrieve conversation: ${res.error}`)
       if (res.result) {
         // pipelineApi.chatEmbed(res.result.chat, res.result.messages)
 
