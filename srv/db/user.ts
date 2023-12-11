@@ -95,7 +95,8 @@ export async function getMysqluser(userId: string) {
       enabled : true,
       filterActions : true
     },
-    elevenLabsApiKey: encryptText(config.elevenKey)
+    elevenLabsApiKey: encryptText(config.elevenKey),
+    loginStatus: user[0].login_status
   }
   return ret
 }

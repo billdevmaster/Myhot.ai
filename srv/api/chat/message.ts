@@ -84,10 +84,14 @@ export const generateMessageV2 = handle(async (req, res) => {
   const chatId = params.id
   assertValid(genValidator, body)
   if (!userId) {
-    return handleGuestGenerate(body, req, res)
+    throw errors.NotFound
   }
+
   const impersonate: AppSchema.Character | undefined = body.impersonate
   const user = await store.users.getMysqluser(userId)
+  if (!user.loginStatus) {
+    throw errors.Forbidden
+  }
   body.user = user
 
   const chat = await store.chats.getChatOnly(chatId)
@@ -440,134 +444,6 @@ export const generateMessageV2 = handle(async (req, res) => {
 
   await store.chats.update(chatId, {})
 })
-
-async function handleGuestGenerate(body: GenRequest, req: AppRequest, res: Response) {
-  const chatId = req.params.id
-  const guest = req.socketId
-  const log = req.log
-
-  const chat: AppSchema.Chat = body.chat
-  if (!chat) throw errors.NotFound
-
-  const requestId = v4()
-  const messageId =
-    body.kind === 'retry'
-      ? body.replacing?._id ?? requestId
-      : body.kind === 'continue'
-      ? body.continuing?._id
-      : requestId
-
-  // Coalesce for backwards compatibly while new UI rolls out
-  const replyAs: AppSchema.Character = body.replyAs || body.char
-
-  // For authenticated users we will verify parts of the payload
-  let newMsg: AppSchema.ChatMessage | undefined
-  if (body.kind === 'send' || body.kind === 'ooc') {
-    newMsg = newMessage(v4(), chatId, body.text!, {
-      userId: 'anon',
-      ooc: body.kind === 'ooc',
-      event: undefined,
-    })
-  } else if (body.kind.startsWith('send-event:')) {
-    newMsg = newMessage(v4(), chatId, body.text!, {
-      characterId: replyAs?._id,
-      ooc: false,
-      event: body.kind.split(':')[1] as AppSchema.EventTypes,
-    })
-  }
-
-  if (newMsg) {
-    sendGuest(guest, { type: 'message-created', msg: newMsg, chatId })
-  }
-
-  if (body.kind === 'ooc') {
-    return { success: true }
-  }
-
-  res.json({ success: true, generating: true, message: 'Generating message', requestId })
-
-  const { stream, adapter, ...entities } = await createTextStreamV2(
-    { ...body, chat, replyAs, requestId },
-    log,
-    guest
-  )
-
-  log.setBindings({ adapter })
-
-  let generated = ''
-  let error = false
-  let meta = { ctx: entities.settings.maxContextLength, char: entities.size }
-
-  for await (const gen of stream) {
-    if (typeof gen === 'string') {
-      generated = gen
-      continue
-    }
-
-    if ('partial' in gen) {
-      sendGuest(guest, { type: 'message-partial', partial: gen.partial, adapter, chatId })
-      continue
-    }
-
-    if ('meta' in gen) {
-      Object.assign(meta, gen.meta)
-      continue
-    }
-
-    if ('prompt' in gen) {
-      sendGuest(guest, { type: 'service-prompt', id: messageId, prompt: gen.prompt })
-      continue
-    }
-
-    if ('error' in gen) {
-      error = true
-      sendGuest(guest, { type: 'message-error', error: gen.error, adapter, chatId })
-      break
-    }
-
-    if ('warning' in gen) {
-      sendGuest(guest, { type: 'message-warning', requestId, warning: gen.warning })
-      continue
-    }
-  }
-
-  if (error) return
-
-  const responseText = body.kind === 'continue' ? `${body.continuing.msg} ${generated}` : generated
-
-  const characterId = body.kind === 'self' ? undefined : body.replyAs?._id || body.char?._id
-  const senderId = body.kind === 'self' ? 'anon' : undefined
-  const response = newMessage(messageId, chatId, responseText, {
-    characterId,
-    userId: senderId,
-    ooc: false,
-    meta,
-    event: undefined,
-  })
-
-  switch (body.kind) {
-    case 'summary':
-      sendGuest(guest, { type: 'chat-summary', chatId, summary: generated })
-      return
-
-    case 'continue':
-    case 'request':
-    case 'retry':
-    case 'self':
-    case 'send':
-      sendGuest(guest, {
-        type: 'guest-message-created',
-        requestId,
-        msg: response,
-        chatId,
-        adapter,
-        continue: body.kind === 'continue',
-        generate: true,
-        meta,
-      })
-      return
-  }
-}
 
 function newMessage(
   messageId: string,

@@ -202,6 +202,7 @@ export namespace AppSchema {
       customerId: string
       subscriptionId: string
     }
+    loginStatus?: number
   }
 
   export interface ApiKey {
