@@ -248,6 +248,5 @@ const resetMysql = (input: string) => {
   input = input.replace(/wh3re/g, "where");
   input = input.replace(/sch3ma/g, "schema");
   input = input.replace(/c0unt/g, "count");
-  console.log(input)
   return input;
 }
