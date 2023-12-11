@@ -65,10 +65,10 @@ export const getChat = handle(async (req) => {
 
   // check the client ipaddress
   if (clientIP) {
-    if (!user.login_status) {
+    if (!user[0].login_status) {
       return {success: false, msg: "You are logout"}
     }
-    let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} order by timestamp, desc limit 1`;
+    let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} order by timestamp desc limit 1`;
     chatSession = await getMysqlQueryResult(query);
     if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
       return {success: false, msg: "Your Ipaddress is wrong"}
