@@ -192,7 +192,7 @@ export const getChat = handle(async (req) => {
     })
   }
   if (chatSession.length > 0) {
-    const query = `Update chat_session set chat_url=${chat._id} where ${chatSession[0].id}`
+    const query = `Update chat_session set chat_url='${chat._id}' where id=${chatSession[0].id}`
     await getMysqlQueryResult(query)
   }
 
