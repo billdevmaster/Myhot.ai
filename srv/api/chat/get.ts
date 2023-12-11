@@ -103,12 +103,12 @@ export const getChat = handle(async (req) => {
   const characterInfo: any = {
     characterId: character[0].ID,
     name: character[0].fullName,
-    persona: {kind: "attributes", attributes: {"personality": moods, "carrer": [character[0].Description]}},
+    persona: {kind: "attributes", attributes: {"personality": moods, "carrer": [resetMysql(character[0].Description)]}},
     sampleChat: "",
     description: "",
     appearance: undefined,
     culture: undefined,
-    scenario: character[0].Description ? character[0].Description : "",
+    scenario: character[0].summaryForUser ? resetMysql(character[0].summaryForUser) : "",
     greeting: "",
     visualType: undefined,
     // sprite: "",
@@ -213,3 +213,40 @@ export const getChat = handle(async (req) => {
   const token = await createFEAccessToken(`${user[0].Fname} ${user[0].Lname}`, userId)
   return { success: true, token, chat }
 })
+
+const resetMysql = (input: string) => {
+  input = input.replace(";2t5", "\r");
+  input = input.replace(";2t4", "\n");
+  input = input.replace(";2t6", "\\");
+  input = input.replace(";7t6", "\"");
+  input = input.replace(";7t7", "'");
+  input = input.replace(";7t8", "/");
+  input = input.replace(";9i8", "<");
+  input = input.replace(";9i9", ">");
+  input = input.replace(";9i5", "=");
+  input = input.replace(";8i1", "(");
+  input = input.replace(";8i2", ")");
+  input = input.replace(";1i2", "%");
+  input = input.replace(";1i3", "#");
+  input = input.replace(";1i4", "$");
+  input = input.replace(";1i5", "’");
+  input = input.replace(";1i7", "‘");
+  input = input.replace(";1i8", "`");
+  input = input.replace(";2i1", "{");
+  input = input.replace(";2i2", "}");
+  input = input.replace(";2i3", "&");
+  input = input.replace(";2i4", "+");
+  input = input.replace("del3te", "delete");
+  input = input.replace("upd4te", "update");
+  input = input.replace("t4ble", "table");
+  input = input.replace("s3l3ct", "select");
+  input = input.replace("ins3rt", "insert");
+  input = input.replace("un10n", "union");
+  input = input.replace("dr0p", "drop");
+  input = input.replace("cr3ate", "create");
+  input = input.replace("4lter", "alter");
+  input = input.replace("wh3re", "where");
+  input = input.replace("sch3ma", "schema");
+  input = input.replace("c0unt", "count");
+  return input;
+}
