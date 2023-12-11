@@ -242,7 +242,7 @@ const SingleMessage: Component<
                 </span>
                 <Switch>
                   <Match
-                    when={true}
+                    when={false}
                   >
                     <MessageOptions
                       char={ctx.char!}

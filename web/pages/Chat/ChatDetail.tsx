@@ -382,7 +382,7 @@ const ChatDetail: Component = () => {
         </div>
       </Show>
       <Show when={chats.chat}>
-        <main class="mx-auto flex w-full justify-between gap-4 xs:flex-column">
+        <main class="mx-auto flex w-full justify-between gap-4">
           <div
             class={`${chatGrid()} gap-1 ${chatMargin()} ${chatWidth()} mx-auto flex flex-col pb-1 xs:flex`}
           >
@@ -403,13 +403,13 @@ const ChatDetail: Component = () => {
               style={contentStyles()}
             >
               <section class="flex h-full w-full flex-col justify-between gap-2">
-                <div class="flex overflow-y-auto h-full">
-                  <div class="mr-2">
+                <div class="flex flex-col sm:flex-row overflow-y-auto h-full">
+                  <div class="sm:mr-2 flex flex-row sm:flex-col items-center justify-around">
                     <AvatarIcon
                       format={{ corners: 'lg', size: '3xl' }}
                       avatarUrl={chats.char?.avatar!}
                     />
-                    <div class="w-full flex justify-center mt-5">
+                    <div class="sm:w-full flex justify-center sm:mt-5">
                       <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full flex gap-2" onClick={() => setRestart(true)}>
                         <AlertTriangle /> Restart Chat <AlertTriangle />
                         {/* Restart Chat */}
