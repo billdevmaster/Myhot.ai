@@ -13,29 +13,31 @@ export const getChatDetail = handle(async ({ headers, userId, params }) => {
   const detail = await store.chats.getChat(id)
 
   if (!detail) throw errors.NotFound
-
-  
-  // const canView = await store.chats.canViewChat(userId, detail.chat)
-  // console.log("okay", canView)
-  // if (!canView) {
-    //   throw errors.Forbidden
-    // }
-    
     const [members, active] = await Promise.all([
       store.users.getMysqlProfiles(detail.chat.userId, detail.chat.memberIds),
       store.chats.getActiveMembers(detail.chat._id),
     ])
     const character = detail.characters.find((ch) => ch._id === detail.chat.characterId)
+    
     // check the client ipaddress
     if (clientIP) {
       const user: any = await getMysqlQueryResult(`SELECT * from users where ID=${userId}`)
+      const allowed_user: any = await getMysqlQueryResult(`SELECT * from ip_white_list`)
+      let is_white_listed = false
       if (!user[0].login_status) {
         throw errors.Forbidden
       }
-      let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${character?.characterId} order by timestamp desc limit 1`;
-      const chatSession: any = await getMysqlQueryResult(query);
-      if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
-        throw errors.Forbidden
+      for (let i = 0; i < allowed_user.length; i++) {
+        if (allowed_user[i].user_id == userId) {
+          is_white_listed = true
+        }
+      }
+      if (!is_white_listed) {
+        let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${character?.characterId} order by timestamp desc limit 1`;
+        const chatSession: any = await getMysqlQueryResult(query);
+        if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
+          throw errors.Forbidden
+        }
       }
     }
     
