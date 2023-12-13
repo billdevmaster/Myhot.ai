@@ -361,7 +361,7 @@ const ChatDetail: Component = () => {
             </header>
             
             <section
-              class={`max-w-7xl m-auto w-full h-full gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
+              class={`chat-container max-w-7xl m-auto w-full h-full gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
               style={contentStyles()}
             >
               <section class="flex h-full w-full flex-col justify-between gap-2">
