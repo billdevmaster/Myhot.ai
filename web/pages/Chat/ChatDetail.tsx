@@ -318,15 +318,9 @@ const ChatDetail: Component = () => {
   })
 
   const contentStyles = createMemo((): JSX.CSSProperties => {
-    if (chats.opts.pane && isPaneOrPopup() === 'pane') {
-      return {
-        gap: '4px',
-        'justify-self': 'center',
-        'flex-direction': 'row',
-      }
+    return {
+      'min-height': 'calc(100vh - 70px)'
     }
-
-    return {}
   })
 
   const msgsMaxWidth = createMemo(() => (chats.opts.pane ? getMaxChatWidth(user.ui.chatWidth) : ''))
@@ -371,7 +365,7 @@ const ChatDetail: Component = () => {
               style={contentStyles()}
             >
               <section class="flex h-full w-full flex-col justify-between gap-2">
-                <div class="flex flex-col sm:flex-row overflow-y-auto h-full">
+                <div class="flex flex-col sm:flex-row overflow-y-auto h-full justify-between">
                   <div class="sm:mr-2 flex flex-row sm:flex-col items-center justify-around sm:justify-start">
                     <AvatarIcon
                       format={{ corners: 'lg', size: '3xl' }}
