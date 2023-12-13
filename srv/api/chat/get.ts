@@ -84,10 +84,20 @@ export const getChat = handle(async (req) => {
     if (!user[0].login_status) {
       return {success: false, msg: "You are logout"}
     }
-    let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} order by timestamp desc limit 1`;
-    chatSession = await getMysqlQueryResult(query);
-    if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
-      return {success: false, msg: "Your Ipaddress is wrong"}
+   
+    const allowed_user: any = await getMysqlQueryResult(`SELECT * from ip_white_list`)
+    let is_white_listed = false
+    for (let i = 0; i < allowed_user.length; i++) {
+      if (allowed_user[i].user_id == userId) {
+        is_white_listed = true
+      }
+    }
+    if (!is_white_listed) { 
+      let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} order by timestamp desc limit 1`;
+      chatSession = await getMysqlQueryResult(query);
+      if (chatSession.length == 0 || chatSession[0].ip != clientIP) {
+        return {success: false, msg: "Your Ipaddress is wrong"}
+      }
     }
   }
 
@@ -98,7 +108,6 @@ export const getChat = handle(async (req) => {
   }
   // copy character to my db
 
-  // uploading mp3 file and get voice id from elevenlab
   // const testAudioUrl = "https://od.lk/d/NTRfMjUxNDgwNjVf/voice_preview_Valentino.mp3"
   const testAudioUrl = "https://myhot.ai/uploads/audio/" + character[0].voice_sample
 
@@ -192,7 +201,7 @@ export const getChat = handle(async (req) => {
     characterId: char._id,
     name: 'Chat',
     genPreset: 'a7aceeec-5e55-4135-90ce-549aebcf3657',
-    elevenKey: user[0].elevenKey ? user[0].elevenKey : null
+    elevenKey: null
   }
   const oldchat: any = await store.chats.getChatByUserAndChar(userId, char._id)
   let chat: any = null
