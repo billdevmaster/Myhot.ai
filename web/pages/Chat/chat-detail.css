@@ -24,23 +24,18 @@
   .avatar-chat-detail {
     height: calc(100dvh - 10px);
   }
-  .chat-container {
-    min-height: calc(100vh - 120px);
-  }
 }
 
-@media (min-width: 1024px) {
-  .chat-detail {
-    height: 100vh;
-    height: 100dvh;
-    grid-template-rows: auto 1fr auto;
-  }
+.chat-detail {
+  height: 100vh;
+  height: 100dvh;
+  grid-template-rows: auto 1fr auto;
+}
 
-  .avatar-chat-detail {
-    height: 100vh;
-    height: 100dvh;
-    grid-template-rows: auto 1fr auto;
-  }
+.avatar-chat-detail {
+  height: 100vh;
+  height: 100dvh;
+  grid-template-rows: auto 1fr auto;
 }
 
 .chat {
