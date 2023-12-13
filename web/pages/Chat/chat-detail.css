@@ -20,16 +20,12 @@
   @apply gap-1 sm:gap-2;
 }
 
-.chat-container {
-  min-height: 'calc(100vh - 70px)'
-}
-
 @media (max-width: 640px) {
   .avatar-chat-detail {
     height: calc(100dvh - 10px);
   }
   .chat-container {
-    min-height: 'calc(100vh - 120px)';
+    min-height: calc(100vh - 120px);
   }
 }
 

@@ -362,7 +362,6 @@ const ChatDetail: Component = () => {
             
             <section
               class={`chat-container max-w-7xl m-auto w-full h-full gap-1 overflow-y-auto ${msgsAndPaneJustifyContent()}`}
-              style={contentStyles()}
             >
               <section class="flex h-full w-full flex-col justify-between gap-2">
                 <div class="flex flex-col sm:flex-row overflow-y-auto h-full justify-between">
