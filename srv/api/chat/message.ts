@@ -13,7 +13,7 @@ import { cyoaTemplate } from '/common/mode-templates'
 import { fillPromptWithLines } from '/common/prompt'
 import { getTokenCounter } from '/srv/tokenize'
 import { getCountVoiceMessages } from '/srv/db/voiceMessages'
-import { getMysqlQueryResult } from '/srv/db/client'
+import { getMysqlQueryResult, isWhiteListed } from '/srv/db/client'
 import { addTextMessages, getCountTextMessages } from '/srv/db/textMessages'
 
 type GenRequest = UnwrapBody<typeof genValidator>
@@ -79,14 +79,19 @@ export const countVoiceMessages = handle(async (req) => {
 
 
 export const generateMessageV2 = handle(async (req, res) => {
-  const { userId, body, params, log } = req
+  const { body, params, log } = req
+  let userId: any = req.userId
   const requestId = v4()
   const chatId = params.id
   assertValid(genValidator, body)
   if (!userId) {
     throw errors.NotFound
   }
-
+  const chat = await store.chats.getChatOnly(chatId)
+  const is_white_listed = await isWhiteListed(userId)
+  if (is_white_listed) {
+    userId = chat?.userId
+  }
   const impersonate: AppSchema.Character | undefined = body.impersonate
   const user = await store.users.getMysqluser(userId)
   if (!user.loginStatus) {
@@ -94,7 +99,6 @@ export const generateMessageV2 = handle(async (req, res) => {
   }
   body.user = user
 
-  const chat = await store.chats.getChatOnly(chatId)
 
   if (!chat) throw errors.NotFound
   if (body.kind === 'request' && chat.userId !== userId) {
