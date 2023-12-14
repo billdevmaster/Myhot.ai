@@ -171,7 +171,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       })
     }
 
-    sendOne(userId, { type: 'message-created', msg: userMsg, chatId })
+    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
   } else if (body.kind.startsWith('send-event:')) {
     userMsg = await store.msgs.createChatMessage({
       chatId,
@@ -181,7 +181,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       ooc: false,
       event: body.kind.split(':')[1] as AppSchema.EventTypes,
     })
-    sendOne(userId, { type: 'message-created', msg: userMsg, chatId })
+    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
   }
 
   if (body.kind === 'ooc' || !replyAs) {
@@ -254,7 +254,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       }
 
       if ('prompt' in gen) {
-        sendOne(userId, { type: 'service-prompt', id: messageId, prompt: gen.prompt })
+        sendMany(members, { type: 'service-prompt', id: messageId, prompt: gen.prompt })
         continue
       }
 
@@ -265,7 +265,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       }
 
       if ('warning' in gen) {
-        sendOne(userId, { type: 'message-warning', requestId, warning: gen.warning })
+        sendMany(members, { type: 'message-warning', requestId, warning: gen.warning })
       }
     }
   } catch (ex: any) {
@@ -340,7 +340,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
   switch (body.kind) {
     case 'summary': {
-      sendOne(userId, { type: 'chat-summary', chatId, summary: generated })
+      sendMany(members, { type: 'chat-summary', chatId, summary: generated })
       break
     }
 
@@ -373,7 +373,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
       await addTextMessages(chatId, msg.msg);
 
-      sendOne(userId, {
+      sendMany(members, {
         type: 'message-created',
         requestId,
         msg,
@@ -394,7 +394,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           state: 'retried',
         })
-        sendOne(userId, {
+        sendMany(members, {
           type: 'message-retry',
           requestId,
           chatId,
@@ -417,7 +417,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           event: undefined,
         })
-        sendOne(userId, {
+        sendMany(members, {
           type: 'message-created',
           requestId,
           msg,
@@ -453,30 +453,6 @@ export const generateMessageV2 = handle(async (req, res) => {
 
   await store.chats.update(chatId, {})
 })
-
-function newMessage(
-  messageId: string,
-  chatId: string,
-  text: string,
-  props: {
-    userId?: string
-    characterId?: string
-    ooc: boolean
-    meta?: any
-    event: undefined | AppSchema.EventTypes
-  }
-) {
-  const userMsg: AppSchema.ChatMessage = {
-    _id: messageId,
-    chatId,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    kind: 'chat-message',
-    msg: text,
-    ...props,
-  }
-  return userMsg
-}
 
 async function ensureBotMembership(
   chat: AppSchema.Chat,
