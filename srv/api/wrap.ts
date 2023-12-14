@@ -45,5 +45,7 @@ export const errors = {
   NotFound: new StatusError('Resource not found', 404),
   Unauthorized: new StatusError('Unauthorized', 401),
   Forbidden: new StatusError('Forbidden', 403),
+  IpNotMatch: new StatusError('Ipaddress is match now', 405),
+  LoginError: new StatusError('you are not logined', 405),
   BadRequest: new StatusError('Bad request', 400),
 }

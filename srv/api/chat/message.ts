@@ -92,15 +92,13 @@ export const generateMessageV2 = handle(async (req, res) => {
   if (is_white_listed) {
     userId = chat?.userId
   }
-  console.log(userId)
   const impersonate: AppSchema.Character | undefined = body.impersonate
   const user = await store.users.getMysqluser(userId)
   if (!user.loginStatus) {
-    throw errors.Forbidden
+    throw errors.LoginError
   }
   body.user = user
-
-
+  console.log(body.user)
   if (!chat) throw errors.NotFound
   if (body.kind === 'request' && chat.userId !== userId) {
     throw errors.Forbidden
