@@ -81,6 +81,7 @@ export const countVoiceMessages = handle(async (req) => {
 export const generateMessageV2 = handle(async (req, res) => {
   const { body, params, log } = req
   let userId: any = req.userId
+  let socketId = userId
   const requestId = v4()
   const chatId = params.id
   assertValid(genValidator, body)
@@ -125,7 +126,7 @@ export const generateMessageV2 = handle(async (req, res) => {
     const textCredit = credit[0].text_credit;
     const textMessageCount = await getCountTextMessages(chat._id);
     if (textMessageCount >= textCredit) {
-      sendMany(members, {
+      sendOne(socketId, {
         type: 'message-error',
         requestId,
         error: `Your credit is not enough`,
@@ -171,7 +172,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       })
     }
 
-    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
+    sendOne(socketId, { type: 'message-created', msg: userMsg, chatId })
   } else if (body.kind.startsWith('send-event:')) {
     userMsg = await store.msgs.createChatMessage({
       chatId,
@@ -181,7 +182,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       ooc: false,
       event: body.kind.split(':')[1] as AppSchema.EventTypes,
     })
-    sendMany(members, { type: 'message-created', msg: userMsg, chatId })
+    sendOne(socketId, { type: 'message-created', msg: userMsg, chatId })
   }
 
   if (body.kind === 'ooc' || !replyAs) {
@@ -204,7 +205,7 @@ export const generateMessageV2 = handle(async (req, res) => {
     })
   }
 
-  sendMany(members, {
+  sendOne(socketId, {
     type: 'message-creating',
     chatId,
     mode: body.kind,
@@ -239,7 +240,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
       if ('partial' in gen) {
         const prefix = body.kind === 'continue' ? `${body.continuing.msg} ` : ''
-        sendMany(members, {
+        sendOne(socketId, {
           type: 'message-partial',
           partial: `${prefix}${gen.partial}`,
           adapter,
@@ -254,18 +255,18 @@ export const generateMessageV2 = handle(async (req, res) => {
       }
 
       if ('prompt' in gen) {
-        sendMany(members, { type: 'service-prompt', id: messageId, prompt: gen.prompt })
+        sendOne(socketId, { type: 'service-prompt', id: messageId, prompt: gen.prompt })
         continue
       }
 
       if ('error' in gen) {
         error = true
-        sendMany(members, { type: 'message-error', requestId, error: gen.error, adapter, chatId })
+        sendOne(socketId, { type: 'message-error', requestId, error: gen.error, adapter, chatId })
         continue
       }
 
       if ('warning' in gen) {
-        sendMany(members, { type: 'message-warning', requestId, warning: gen.warning })
+        sendOne(socketId, { type: 'message-warning', requestId, warning: gen.warning })
       }
     }
   } catch (ex: any) {
@@ -273,7 +274,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
     if (ex instanceof StatusError) {
       log.warn({ err: ex }, `[${ex.status}] Stream handler exception`)
-      sendMany(members, {
+      sendOne(socketId, {
         type: 'message-error',
         requestId,
         error: `[${ex.status}] Message failed: ${ex?.message || ex}`,
@@ -282,7 +283,7 @@ export const generateMessageV2 = handle(async (req, res) => {
       })
     } else {
       log.error({ err: ex }, 'Unhandled exception occurred during stream handler')
-      sendMany(members, {
+      sendOne(socketId, {
         type: 'message-error',
         requestId,
         error: `Unhandled exception: ${ex?.message || ex}`,
@@ -340,7 +341,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
   switch (body.kind) {
     case 'summary': {
-      sendMany(members, { type: 'chat-summary', chatId, summary: generated })
+      sendOne(socketId, { type: 'chat-summary', chatId, summary: generated })
       break
     }
 
@@ -373,7 +374,7 @@ export const generateMessageV2 = handle(async (req, res) => {
 
       await addTextMessages(chatId, msg.msg);
 
-      sendMany(members, {
+      sendOne(socketId, {
         type: 'message-created',
         requestId,
         msg,
@@ -394,7 +395,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           state: 'retried',
         })
-        sendMany(members, {
+        sendOne(socketId, {
           type: 'message-retry',
           requestId,
           chatId,
@@ -417,7 +418,7 @@ export const generateMessageV2 = handle(async (req, res) => {
           meta,
           event: undefined,
         })
-        sendMany(members, {
+        sendOne(socketId, {
           type: 'message-created',
           requestId,
           msg,
@@ -437,7 +438,7 @@ export const generateMessageV2 = handle(async (req, res) => {
         meta,
         state: 'continued',
       })
-      sendMany(members, {
+      sendOne(socketId, {
         type: 'message-retry',
         requestId,
         chatId,
