@@ -91,6 +91,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   const is_white_listed = await isWhiteListed(userId)
   if (is_white_listed) {
     userId = chat?.userId
+    
   }
   const impersonate: AppSchema.Character | undefined = body.impersonate
   const user = await store.users.getMysqluser(userId)
@@ -98,7 +99,13 @@ export const generateMessageV2 = handle(async (req, res) => {
     throw errors.LoginError
   }
   body.user = user
-  console.log(body.user)
+  if (is_white_listed) {
+    body.sender = {
+      handle: user.username,
+      kind: "profile",
+      userId: userId
+    }
+  }
   if (!chat) throw errors.NotFound
   if (body.kind === 'request' && chat.userId !== userId) {
     throw errors.Forbidden
@@ -147,7 +154,6 @@ export const generateMessageV2 = handle(async (req, res) => {
   let userMsg: AppSchema.ChatMessage | undefined
   if (body.kind === 'send' || body.kind === 'ooc') {
     await ensureBotMembership(chat, members, impersonate)
-    console.log("body.text", body.text!)
     userMsg = await store.msgs.createChatMessage({
       chatId,
       message: body.text!,

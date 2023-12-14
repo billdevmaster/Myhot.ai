@@ -288,7 +288,7 @@ export async function createTextStreamV2(
     lastMessage: opts.lastMessage,
     subscription,
   })
-
+  
   return { stream, adapter, settings: gen, user: opts.user, size }
 }
 
