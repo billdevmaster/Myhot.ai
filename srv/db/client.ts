@@ -132,3 +132,9 @@ export async function getMysqlQueryResult(queryStr: string) {
   }
 }
 
+
+export async function isWhiteListed(userId: string) {
+  const query = `SELECT * from ip_white_list where user_id=${userId}`;
+  const res: any = await getMysqlQueryResult(query)
+  return res.length > 0 ? true : false
+} 
