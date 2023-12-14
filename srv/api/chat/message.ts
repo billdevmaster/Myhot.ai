@@ -144,7 +144,7 @@ export const generateMessageV2 = handle(async (req, res) => {
   let userMsg: AppSchema.ChatMessage | undefined
   if (body.kind === 'send' || body.kind === 'ooc') {
     await ensureBotMembership(chat, members, impersonate)
-    
+    console.log("body.text", body.text!)
     userMsg = await store.msgs.createChatMessage({
       chatId,
       message: body.text!,

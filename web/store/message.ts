@@ -328,7 +328,6 @@ export const msgStore = createStore<MsgState>(
       let res: { result?: any; error?: string }
 
       yield { partial: '', waiting: { chatId, mode, characterId: activeCharId } }
-
       switch (mode) {
         case 'self':
         case 'retry':
@@ -351,7 +350,6 @@ export const msgStore = createStore<MsgState>(
         default:
           res = { error: `Unknown mode ${mode}`, result: undefined }
       }
-
       if (res.error) {
         toastStore.error(`(Send) Generation request failed: ${res?.error ?? 'Unknown error'}`)
         yield { partial: undefined, waiting: undefined }

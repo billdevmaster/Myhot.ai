@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { getCharacter } from './characters'
-import { db } from './client'
+import { db, getMysqlQueryResult } from './client'
 import { AppSchema } from '../../common/types/schema'
 import { now } from './util'
 import { StatusError, errors } from '../api/wrap'
@@ -212,7 +212,15 @@ export async function restartChat(userId: string, chatId: string) {
   const chat = await getChatOnly(chatId)
   if (!chat) throw errors.NotFound
 
-  if (chat.userId !== userId) throw errors.Forbidden
+  // check if this is admin
+  const allowed_user: any = await getMysqlQueryResult(`SELECT * from ip_white_list`)
+  let is_white_listed = false
+  for (let i = 0; i < allowed_user.length; i++) {
+    if (allowed_user[i].user_id == userId) {
+      is_white_listed = true
+    }
+  }
+  if (!is_white_listed && chat.userId !== userId) throw errors.Forbidden
 
   await db('chat-message').deleteMany({ chatId })
   const char = chat.characterId ? await db('character').findOne({ _id: chat.characterId }) : null

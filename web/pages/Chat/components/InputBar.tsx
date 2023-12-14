@@ -191,10 +191,6 @@ const InputBar: Component<{
     setMenu(false)
   }
 
-  const onButtonClick = () => {
-    setMenu(true)
-  }
-
   const setAutoReplyAs = (charId: string) => {
     chatStore.setAutoReplyAs(charId)
     setMenu(false)

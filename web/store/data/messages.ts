@@ -284,7 +284,6 @@ export async function generateResponse(opts: GenerateOpts) {
     chatEmbeds,
     userEmbeds,
   }
-
   const res = await api.post<{ requestId: string }>(`/chat/${entities.chat._id}/generate`, request)
   return res
 }
