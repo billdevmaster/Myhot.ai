@@ -80,13 +80,8 @@ export const getChat = handle(async (req) => {
       return {success: false, msg: "You are logout"}
     }
    
-    const allowed_user: any = await getMysqlQueryResult(`SELECT * from ip_white_list`)
-    let is_white_listed = false
-    for (let i = 0; i < allowed_user.length; i++) {
-      if (allowed_user[i].user_id == userId) {
-        is_white_listed = true
-      }
-    }
+    let is_white_listed = await isWhiteListed(userId)
+    
     if (!is_white_listed) { 
       let query = `SELECT * FROM chat_session where user_id=${userId} and ai_id=${charId} order by timestamp desc limit 1`;
       chatSession = await getMysqlQueryResult(query);
