@@ -12,7 +12,7 @@ import {
   Switch,
 } from 'solid-js'
 import { useNavigate, useParams } from '@solidjs/router'
-import { VenetianMask, AlertTriangle } from 'lucide-solid'
+import { VenetianMask, AlertTriangle, AlertCircle } from 'lucide-solid'
 import ChatExport from './ChatExport'
 import Button from '../../shared/Button'
 import { CharacterPill } from '../../shared/CharacterPill'
@@ -42,7 +42,7 @@ import Slot from '/web/shared/Slot'
 import { useAppContext } from '/web/store/context'
 import AvatarIcon from '/web/shared/AvatarIcon'
 import LogoIcon from '/web/icons/LogoIcon'
-import { ConfirmModal } from '/web/shared/Modal'
+import { ConfirmModal, TitleModal } from '/web/shared/Modal'
 import { TitleCard } from '/web/shared/Card'
 
 const ChatDetail: Component = () => {
@@ -125,6 +125,7 @@ const ChatDetail: Component = () => {
   const [ooc, setOoc] = createSignal<boolean>()
   const [showHiddenEvents, setShowHiddenEvents] = createSignal(false)
   const [restart, setRestart] = createSignal(false)
+  const [showNote, setShowNote] = createSignal(false)
 
   const chatMsgs = createMemo(() => {
     const messages = msgs.msgs
@@ -352,11 +353,14 @@ const ChatDetail: Component = () => {
               data-header=""
               class={` bg-white h-[60px]`}
             >
-              <div class="flex items-center m-auto max-w-7xl">
-                <span>
-                  <LogoIcon/>
-                </span>
-                <p class="text-gray-900 text-3xl font-bold">{chats.char?.name}</p>
+              <div class="flex items-center m-auto max-w-7xl justify-between">
+                <div class="flex items-center">
+                  <span>
+                    <LogoIcon/>
+                  </span>
+                  <p class="text-gray-900 text-3xl font-bold">{chats.char?.name}</p>
+                </div>
+                <AlertCircle class='text-red-900 sm:hidden mr-5' onClick={() => {setShowNote(true)}}/>
               </div>
             </header>
             
@@ -375,6 +379,32 @@ const ChatDetail: Component = () => {
                         <AlertTriangle /> Restart Chat <AlertTriangle />
                         {/* Restart Chat */}
                       </button>
+                    </div>
+                    <div class="hidden sm:block max-w-sm mt-5 p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
+                      <h5 class="mb-2 text-center text-xl font-bold tracking-tight text-gray-900 dark:text-white">Please Note</h5>
+                      <p class="font-normal text-sm text-gray-700 dark:text-gray-400">
+                        My AI is still learning. If she responds in
+                        a strange manner, please use the red
+                        RESTART CHAT button. Using this button
+                        will cause her to forget EVERYTHING
+                        about you and our previous
+                        conversations.<br/>
+                        I am open to any type of conversation,
+                        but remember to be a gentleman.<br/>
+                        This AI is based on my personality.<br/>
+                        If you talk about sex too quickly, she
+                        might not like it and will let you know.<br/>
+                        She might even block you. In that case,
+                        you can always use the RESTART CHAT
+                        button.<br/>
+                        Use these markers ** to express your
+                        actions.<br/>
+                        Example: *I am smiling at you*
+                        Talk to my AI the same way you would
+                        talk to me, and this will be the start of
+                        a long and hot relationship.<br/>
+                        Tame me and I will be yours. :wink:
+                      </p>
                     </div>
                   </div>
                   <div class="flex w-full flex-col justify-end gap-2 overflow-y-auto">
@@ -563,6 +593,36 @@ const ChatDetail: Component = () => {
         confirm={() => {
           chatStore.restartChat(chats.chat!._id)
         }}
+      />
+
+      <TitleModal
+        message={
+          <p class="text-sm text-gray-900">
+            My AI is still learning. If she responds in
+            a strange manner, please use the red
+            RESTART CHAT button. Using this button
+            will cause her to forget EVERYTHING
+            about you and our previous
+            conversations.<br/>
+            I am open to any type of conversation,
+            but remember to be a gentleman.<br/>
+            This AI is based on my personality.<br/>
+            If you talk about sex too quickly, she
+            might not like it and will let you know.<br/>
+            She might even block you. In that case,
+            you can always use the RESTART CHAT
+            button.<br/>
+            Use these markers ** to express your
+            actions.<br/>
+            Example: *I am smiling at you*
+            Talk to my AI the same way you would
+            talk to me, and this will be the start of
+            a long and hot relationship.<br/>
+            Tame me and I will be yours. :wink:
+          </p>
+        }
+        show={showNote()}
+        close={() => setShowNote(false)}
       />
     </>
   )

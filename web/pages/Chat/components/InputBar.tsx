@@ -1,7 +1,6 @@
 import { ImagePlus, Megaphone, PlusCircle, Send, Zap } from 'lucide-solid'
 import {
   Component,
-  createEffect,
   createMemo,
   createSignal,
   For,
@@ -28,7 +27,6 @@ import NoCharacterIcon from '/web/icons/NoCharacterIcon'
 import WizardIcon from '/web/icons/WizardIcon'
 import { EVENTS, events } from '/web/emitter'
 import { AutoComplete } from '/web/shared/AutoComplete'
-import { api } from "/web/store/api"
 import { chatsApi } from '/web/store/data/chats'
 
 const InputBar: Component<{
@@ -357,6 +355,9 @@ const InputBar: Component<{
             </Button>
           </Match>
         </Switch>
+        {/* <Button schema="secondary" class="w-full" onClick={playVoice} alignLeft>
+          <Megaphone size={18} /> Play Voice
+        </Button> */}
       </span>
     </div>
   )

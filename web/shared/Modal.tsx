@@ -47,14 +47,14 @@ const Modal: Component<Props> = (props) => {
           <form
             ref={ref}
             onSubmit={props.onSubmit || defaultSubmit}
-            class={`modal-height bg-gray-500 z-50 my-auto w-[calc(100vw-16px)] overflow-hidden rounded-lg shadow-md shadow-black transition-all ${width()} `}
+            class={`modal-height bg-white z-50 my-auto w-[calc(100vw-16px)] overflow-hidden rounded-lg shadow-md shadow-black transition-all ${width()} `}
           >
             <Switch>
               <Match when={props.tabs}>
                 <div class="flex h-[56px] flex-row justify-between text-lg">
                   <Tabs selected={tab} select={setTab} tabs={props.tabs!.map((t) => t.name)} />
                   <Show when={props.dismissable !== false}>
-                    <div onClick={props.close} class="cursor-pointer p-4">
+                    <div onClick={props.close} class="cursor-pointer p-4 text-gray-900">
                       <X />
                     </div>
                   </Show>
@@ -63,9 +63,9 @@ const Modal: Component<Props> = (props) => {
 
               <Match when>
                 <div class="flex flex-row justify-between p-4 text-lg font-bold">
-                  <div>{props.title}</div>
+                  <div class="text-gray-900">{props.title}</div>
                   <Show when={props.dismissable !== false}>
-                    <div onClick={props.close} class="cursor-pointer">
+                    <div onClick={props.close} class="cursor-pointer text-gray-900">
                       <X />
                     </div>
                   </Show>
@@ -173,6 +173,27 @@ export const ConfirmModal: Component<{
       }
     >
       <div class="mb-8 flex justify-center">{props.message}</div>
+    </Modal>
+  )
+}
+
+export const TitleModal: Component<{
+  show: boolean
+  close: () => void
+  message: string | JSX.Element
+}> = (props) => {
+  return (
+    <Modal
+      show={props.show}
+      close={props.close}
+      title="Please Note"
+      footer={
+        <>
+          
+        </>
+      }
+    >
+      <div class="mb-8 flex justify-center text-gray-900">{props.message}</div>
     </Modal>
   )
 }
