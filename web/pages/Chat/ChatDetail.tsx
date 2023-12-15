@@ -381,29 +381,29 @@ const ChatDetail: Component = () => {
                       </button>
                     </div>
                     <div class="hidden sm:block max-w-sm mt-5 p-4 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100">
-                      <h5 class="mb-2 text-center text-xl font-bold tracking-tight text-gray-900 dark:text-white">Please Note</h5>
-                      <p class="font-normal text-sm text-gray-700 dark:text-gray-400">
+                      <h5 class="mb-2 text-center text-xl font-bold tracking-tight text-gray-900">Please Note</h5>
+                      <p class="font-normal text-sm text-gray-700 h-[300px] overflow-y-scroll">
                         My AI is still learning. If she responds in
                         a strange manner, please use the red
                         RESTART CHAT button. Using this button
                         will cause her to forget EVERYTHING
                         about you and our previous
-                        conversations.<br/>
+                        conversations.<br/><br/>
                         I am open to any type of conversation,
-                        but remember to be a gentleman.<br/>
+                        but remember to be a gentleman.<br/><br/>
                         This AI is based on my personality.<br/>
                         If you talk about sex too quickly, she
                         might not like it and will let you know.<br/>
                         She might even block you. In that case,
                         you can always use the RESTART CHAT
-                        button.<br/>
+                        button.<br/><br/>
                         Use these markers ** to express your
                         actions.<br/>
-                        Example: *I am smiling at you*
+                        Example: *I am smiling at you*<br/><br/>
                         Talk to my AI the same way you would
                         talk to me, and this will be the start of
-                        a long and hot relationship.<br/>
-                        Tame me and I will be yours. :wink:
+                        a long and hot relationship.<br/><br/>
+                        Tame me and I will be yours.
                       </p>
                     </div>
                   </div>
@@ -603,22 +603,22 @@ const ChatDetail: Component = () => {
             RESTART CHAT button. Using this button
             will cause her to forget EVERYTHING
             about you and our previous
-            conversations.<br/>
+            conversations.<br/><br/>
             I am open to any type of conversation,
-            but remember to be a gentleman.<br/>
+            but remember to be a gentleman.<br/><br/>
             This AI is based on my personality.<br/>
             If you talk about sex too quickly, she
             might not like it and will let you know.<br/>
             She might even block you. In that case,
             you can always use the RESTART CHAT
-            button.<br/>
+            button.<br/><br/>
             Use these markers ** to express your
             actions.<br/>
-            Example: *I am smiling at you*
+            Example: *I am smiling at you*<br/><br/>
             Talk to my AI the same way you would
             talk to me, and this will be the start of
-            a long and hot relationship.<br/>
-            Tame me and I will be yours. :wink:
+            a long and hot relationship.<br/><br/>
+            Tame me and I will be yours.
           </p>
         }
         show={showNote()}
