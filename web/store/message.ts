@@ -566,7 +566,11 @@ async function playVoiceFromUrl(chatId: string, messageId: string, url: string, 
         delay(500)
         audio.play()
       } else {
-        msgStore.setState({ speaking: undefined })
+        const msgs = msgStore.getState().msgs
+        const msg = msgs.find((m) => m._id === messageId)
+        if (!msg) return
+        const nextMsgs = msgs.map((m) => (m._id === msg._id ? { ...m, voiceUrl: url } : m))
+        msgStore.setState({ speaking: undefined, msgs: nextMsgs })
       }
     })
     msgStore.setState({ speaking: { messageId, status: 'generating' } })
