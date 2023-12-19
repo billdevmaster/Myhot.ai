@@ -175,6 +175,7 @@ const requestFullCompletion: CompletionGenerator = async function* (
   body,
   _log
 ) {
+  console.log(url)
   const resp = await needle('post', url, JSON.stringify(body), {
     json: true,
     headers,

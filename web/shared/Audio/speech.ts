@@ -80,7 +80,6 @@ export async function createNativeSpeech(
   speech.lang = culture
   speech.pitch = voice.pitch || 1
   speech.rate = 10
-  
   return speech
 }
 

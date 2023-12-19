@@ -174,7 +174,9 @@ const InputBar: Component<{
     if (!lastTextMsg.characterId) return
     const char = ctx.allBots[lastTextMsg.characterId]
     if (!char?.voice) return
-
+    console.log(lastTextMsg._id)
+    console.log(lastTextMsg.msg)
+    console.log(char.voice)
     msgStore.textToSpeech(
       lastTextMsg._id,
       lastTextMsg.msg,
@@ -355,9 +357,9 @@ const InputBar: Component<{
             </Button>
           </Match>
         </Switch>
-        {/* <Button schema="secondary" class="w-full" onClick={playVoice} alignLeft>
+        <Button schema="secondary" class="w-full" onClick={playVoice} alignLeft>
           <Megaphone size={18} /> Play Voice
-        </Button> */}
+        </Button>
       </span>
     </div>
   )

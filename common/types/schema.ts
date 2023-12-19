@@ -448,6 +448,11 @@ export namespace AppSchema {
     banEosToken?: boolean
     earlyStopping?: boolean
     stopSequences?: string[]
+    
+    etaCutoff?: number
+    epsilonCutoff?: number
+    swipesPerGeneration?: number
+    mirostatToggle?: boolean
 
     order?: number[]
     disabledSamplers?: number[]

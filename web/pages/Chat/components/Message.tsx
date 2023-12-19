@@ -2,16 +2,12 @@ import './Message.css'
 import * as Purify from 'dompurify'
 import {
   Check,
-  DownloadCloud,
-  Info,
-  PauseCircle,
   Pencil,
   PlusCircle,
   RefreshCw,
   Terminal,
   Trash,
   X,
-  Zap,
 } from 'lucide-solid'
 import {
   Accessor,
@@ -19,28 +15,24 @@ import {
   createMemo,
   createSignal,
   For,
-  JSX,
   Match,
-  onCleanup,
-  onMount,
   Show,
   Signal,
   Switch,
 } from 'solid-js'
+import { defaultCulture } from '/web/shared/CultureCodes'
 import { BOT_REPLACE, SELF_REPLACE } from '../../../../common/prompt'
 import { AppSchema } from '../../../../common/types/schema'
-import { getAssetUrl, getStrictForm } from '../../../shared/util'
-import { chatStore, userStore, msgStore, settingStore, toastStore, ChatState } from '../../../store'
+import { getAssetUrl } from '../../../shared/util'
+import { chatStore, msgStore, settingStore, ChatState } from '../../../store'
 import { markdown } from '../../../shared/markdown'
 import Button from '/web/shared/Button'
-import { rootModalStore } from '/web/store/root-modal'
 import { ContextState, useAppContext } from '/web/store/context'
 import { trimSentence } from '/common/util'
 import { EVENTS, events } from '/web/emitter'
-import TextInput from '/web/shared/TextInput'
-import { Card } from '/web/shared/Card'
 import Mic from '../../../asset/mic.png'
 import Speaker from '../../../asset/speaker.png'
+import Loop from '../../../asset/loop.png'
 
 type MessageProps = {
   msg: SplitMessage
@@ -89,50 +81,18 @@ const SingleMessage: Component<
   let avatarRef: any
 
   const [ctx] = useAppContext()
-  const user = userStore()
   const state = chatStore()
-  const voice = msgStore((x) => ({
-    status:
-      props.lastSplit && x.speaking?.messageId === props.msg._id ? x.speaking.status : undefined,
-  }))
+  const {speaking} = msgStore.getState()
 
   const [edit, setEdit] = createSignal(false)
+  const [isPlaying, setIsPlaying] = createSignal(speaking && speaking.status == "playing" ? true : false)
   const isBot = !!props.msg.characterId
   const isUser = !!props.msg.userId
-  const [img, setImg] = createSignal('h-full')
   const opts = createSignal(false)
-
-  const [obs] = createSignal(
-    new ResizeObserver(() => {
-      setImg(`calc(${Math.min(avatarRef?.clientHeight, 10000)}px + 1em)`)
-    })
-  )
-
-  onMount(() => obs().observe(avatarRef))
-  onCleanup(() => obs().disconnect())
-
-  const bgStyles = createMemo(() => {
-    const base: JSX.CSSProperties =
-      props.msg.characterId && !props.msg.userId
-        ? ctx.bg.bot
-        : props.msg.ooc
-          ? ctx.bg.ooc
-          : ctx.bg.user
-
-    const styles = { ...base }
-    const show = opts[0]()
-    if (show) {
-      styles['backdrop-filter'] = ''
-    }
-
-    return styles
-  })
-
   const content = createMemo(() => {
     const msgV2 = getMessageContent(ctx, props, state)
     return msgV2
   })
-
   const saveEdit = () => {
     if (!editRef) return
     msgStore.editMessage(props.msg._id, editRef.innerText)
@@ -157,13 +117,38 @@ const SingleMessage: Component<
 
   const opacityClass = props.msg.ooc ? 'opacity-50' : ''
 
-  const format = createMemo(() => ({ size: user.ui.avatarSize, corners: user.ui.avatarCorners }))
+  const playVoice = async (props: MessageProps) => {
+    if (isPlaying()) {
+      setIsPlaying(false)
+      msgStore.stopSpeech()
+    } else {
+      setIsPlaying(true)
+      const lastTextMsg = props.msg
+  
+      if (!lastTextMsg.characterId) return
+      const char = ctx.allBots[lastTextMsg.characterId]
+      if (!char?.voice) return
+      msgStore.textToSpeech(
+        lastTextMsg._id,
+        lastTextMsg.msg,
+        char.voice,
+        defaultCulture
+      )
+    }
+  }
 
   return (
     <div class={`flex items-start ${!props.msg.characterId ? 'flex-row-reverse' : ''}`}>
       <Switch>
         <Match when={ctx.allBots[props.msg.characterId!]}>
-          <img src={Speaker} alt="" class="w-[60px]" />
+          <span class="w-[60px] cursor-pointer">
+            {!isPlaying() && (
+              <img src={Speaker} alt="" class="w-[60px]"  onClick={() => playVoice(props)}/>
+            )}
+            {isPlaying() && (
+              <img src={Loop} alt="" class="w-[40px] mx-2 loop mt-2"  onClick={() => playVoice(props)}/>
+            )}
+          </span>
         </Match>
         <Match when={!props.msg.characterId}>
           <img src={Mic} alt="" class="w-[60px]" />
@@ -214,30 +199,6 @@ const SingleMessage: Component<
                       <Match when={true}>{handleToShow()}</Match>
                     </Switch>
                   </b>
-
-                  <span
-                    classList={{ invisible: ctx.anonymize }}
-                    class={`message-date text-900 ${ctx.allBots[props.msg.characterId!] ? 'text-gray-900' : ''} flex items-center text-xs leading-none`}
-                    data-bot-time={isBot}
-                    data-user-time={isUser}
-                  >
-                    {new Date(props.msg.createdAt).toLocaleString()}
-                    <Show when={canShowMeta(props.original, ctx.promptHistory[props.original._id])}>
-                      <span
-                        class="text-600 hover:text-900 ml-1 cursor-pointer"
-                        onClick={() =>
-                          rootModalStore.info(
-                            <Meta
-                              msg={props.original}
-                              history={ctx.promptHistory[props.original._id]}
-                            />
-                          )
-                        }
-                      >
-                        <Info size={14} />
-                      </span>
-                    </Show>
-                  </span>
                 </span>
                 <Switch>
                   <Match
@@ -504,83 +465,6 @@ function parseMessage(msg: string, ctx: ContextState, isUser: boolean, adapter?:
 
   const parsed = msg.replace(BOT_REPLACE, ctx.char?.name || '').replace(SELF_REPLACE, ctx.handle)
   return parsed
-}
-
-const Meta: Component<{ msg: AppSchema.ChatMessage; history?: any }> = (props) => {
-  let ref: any
-
-  if (!props.msg) return null
-  if (!props.msg.meta && !props.history && !props.msg.adapter) return null
-
-  const updateImagePrompt = () => {
-    const { imagePrompt } = getStrictForm(ref, { imagePrompt: 'string' })
-    msgStore.editMessageProp(props.msg._id, { imagePrompt }, () => {
-      toastStore.success('Image prompt updated')
-    })
-  }
-
-  return (
-    <form ref={ref} class="flex w-full flex-col gap-2">
-      <Card>
-        <table class="text-sm">
-          <Show when={props.msg.adapter}>
-            <tr>
-              <td class="pr-2">
-                <b>Adapter</b>
-              </td>
-              <td>{props.msg.adapter}</td>
-            </tr>
-          </Show>
-          <For each={Object.entries(props.msg.meta || {})}>
-            {([key, value]) => (
-              <tr>
-                <td class="pr-2">
-                  <b>{key}</b>
-                </td>
-                <td>{value as string}</td>
-              </tr>
-            )}
-          </For>
-        </table>
-      </Card>
-
-      <Show when={props.msg.imagePrompt}>
-        <Card>
-          <TextInput
-            helperText={
-              <>
-                Image Prompt -{' '}
-                <span class="link" onClick={updateImagePrompt}>
-                  Save
-                </span>
-              </>
-            }
-            parentClass="text-sm"
-            isMultiline
-            value={props.msg.imagePrompt}
-            fieldName="imagePrompt"
-          />
-        </Card>
-      </Show>
-
-      <Show when={props.history}>
-        <pre class="overflow-x-auto whitespace-pre-wrap break-words rounded-sm bg-[var(--bg-700)] p-1 text-sm">
-          <Show
-            when={typeof props.history === 'string'}
-            fallback={JSON.stringify(props.history, null, 2)}
-          >
-            {props.history}
-          </Show>
-        </pre>
-      </Show>
-    </form>
-  )
-}
-
-function canShowMeta(msg: AppSchema.ChatMessage, history: any) {
-  if (!msg) return false
-  if (msg._id === 'partial') return false
-  return !!msg.adapter || !!history || (!!msg.meta && Object.keys(msg.meta).length >= 1)
 }
 
 function toImageDeleteButton(msgId: string, position: number) {

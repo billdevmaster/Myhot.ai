@@ -224,3 +224,9 @@ export function clamp(toClamp: number, max: number, min?: number) {
 export function now() {
   return new Date().toISOString()
 }
+
+export const delay = (ms: number) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, ms);
+  });
+};

@@ -17,7 +17,7 @@ import { VoiceSettings, VoiceWebSynthesisSettings } from '../../common/types/tex
 import { defaultCulture } from '../shared/CultureCodes'
 import { createSpeech, pauseSpeech } from '../shared/Audio/speech'
 import { eventStore } from './event'
-import { findOne, replace } from '/common/util'
+import { delay, findOne, replace } from '/common/util'
 import { sortAsc } from '/common/chat'
 import { chatsApi } from './data/chats'
 
@@ -435,7 +435,7 @@ export const msgStore = createStore<MsgState>(
         playVoiceFromUrl(activeChatId, messageId, msg.voiceUrl)
         return
       }
-
+      console.log("here")
       const res = await voiceApi.chatTextToSpeech({
         chatId: activeChatId,
         messageId,
@@ -538,7 +538,7 @@ async function handleImage(chatId: string, image: string) {
   })
 }
 
-async function playVoiceFromUrl(chatId: string, messageId: string, url: string) {
+async function playVoiceFromUrl(chatId: string, messageId: string, url: string, loop: boolean = true) {
   if (chatId != msgStore.getState().activeChatId) {
     msgStore.setState({ speaking: undefined })
     return
@@ -562,7 +562,12 @@ async function playVoiceFromUrl(chatId: string, messageId: string, url: string) 
       msgStore.setState({ speaking: { messageId, status: 'playing' }, msgs: nextMsgs })
     })
     audio.addEventListener('ended', () => {
-      msgStore.setState({ speaking: undefined })
+      if (loop) {
+        delay(500)
+        audio.play()
+      } else {
+        msgStore.setState({ speaking: undefined })
+      }
     })
     msgStore.setState({ speaking: { messageId, status: 'generating' } })
     audio.play()
