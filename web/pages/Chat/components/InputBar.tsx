@@ -357,9 +357,9 @@ const InputBar: Component<{
             </Button>
           </Match>
         </Switch>
-        <Button schema="secondary" class="w-full" onClick={playVoice} alignLeft>
+        {/* <Button schema="secondary" class="w-full" onClick={playVoice} alignLeft>
           <Megaphone size={18} /> Play Voice
-        </Button>
+        </Button> */}
       </span>
     </div>
   )
