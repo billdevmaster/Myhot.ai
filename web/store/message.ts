@@ -538,7 +538,7 @@ async function handleImage(chatId: string, image: string) {
   })
 }
 
-async function playVoiceFromUrl(chatId: string, messageId: string, url: string, loop: boolean = true) {
+async function playVoiceFromUrl(chatId: string, messageId: string, url: string, loop: boolean = false) {
   if (chatId != msgStore.getState().activeChatId) {
     msgStore.setState({ speaking: undefined })
     return
