@@ -432,7 +432,7 @@ export const msgStore = createStore<MsgState>(
 
       const msg = msgs.find((m) => m._id === messageId)
       if (msg?.voiceUrl) {
-        playVoiceFromUrl(activeChatId, messageId, msg.voiceUrl)
+        playVoiceFromUrl(activeChatId, messageId, msg.voiceUrl, true)
         return
       }
       console.log("here")
