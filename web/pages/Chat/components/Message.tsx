@@ -86,7 +86,6 @@ const SingleMessage: Component<
 
   const [edit, setEdit] = createSignal(false)
   const [isPlaying, setIsPlaying] = createSignal(speaking && speaking.status == "playing" ? true : false)
-  console.log(speaking)
   const isBot = !!props.msg.characterId
   const isUser = !!props.msg.userId
   const opts = createSignal(false)
@@ -133,7 +132,8 @@ const SingleMessage: Component<
         lastTextMsg._id,
         lastTextMsg.msg,
         char.voice,
-        defaultCulture
+        defaultCulture,
+        true
       )
     }
   }

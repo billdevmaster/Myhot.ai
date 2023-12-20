@@ -64,7 +64,8 @@ export type MsgState = {
    *
    * These will be 'inserted' into chats by 'createdAt' timestamp
    */
-  images: Record<ChatId, AppSchema.ChatMessage[]>
+  images: Record<ChatId, AppSchema.ChatMessage[]>,
+  loop?: boolean
 }
 
 const initState: MsgState = {
@@ -81,6 +82,7 @@ const initState: MsgState = {
   speaking: undefined,
   queue: [],
   cache: {},
+  loop: false
 }
 
 export const msgStore = createStore<MsgState>(
@@ -397,6 +399,7 @@ export const msgStore = createStore<MsgState>(
     },
     stopSpeech() {
       pauseSpeech()
+      msgStore.setState({loop: false})
       return { speaking: undefined }
     },
     async *textToSpeech(
@@ -404,17 +407,19 @@ export const msgStore = createStore<MsgState>(
       messageId: string,
       text: string,
       voice: VoiceSettings,
-      culture?: string
+      culture?: string,
+      playLoop?: boolean | undefined
     ) {
+      if (playLoop) {
+        msgStore.setState({loop: true})
+      }
+      
       pauseSpeech()
-
       if (!voice.service) {
         yield { speaking: undefined }
         return
       }
-
       yield { speaking: { messageId, status: 'generating' } }
-
       if (voice.service === 'webspeechsynthesis') {
         const isSuported = !!window.speechSynthesis
         if (!isSuported) {
@@ -429,13 +434,11 @@ export const msgStore = createStore<MsgState>(
 
         return
       }
-
       const msg = msgs.find((m) => m._id === messageId)
       if (msg?.voiceUrl) {
-        playVoiceFromUrl(activeChatId, messageId, msg.voiceUrl, true)
+        playVoiceFromUrl(activeChatId, messageId, msg.voiceUrl)
         return
       }
-      console.log("here")
       const res = await voiceApi.chatTextToSpeech({
         chatId: activeChatId,
         messageId,
@@ -538,7 +541,7 @@ async function handleImage(chatId: string, image: string) {
   })
 }
 
-async function playVoiceFromUrl(chatId: string, messageId: string, url: string, loop: boolean = false) {
+async function playVoiceFromUrl(chatId: string, messageId: string, url: string) {
   if (chatId != msgStore.getState().activeChatId) {
     msgStore.setState({ speaking: undefined })
     return
@@ -562,6 +565,7 @@ async function playVoiceFromUrl(chatId: string, messageId: string, url: string, 
       msgStore.setState({ speaking: { messageId, status: 'playing' }, msgs: nextMsgs })
     })
     audio.addEventListener('ended', () => {
+      const {loop} = msgStore.getState()
       if (loop) {
         delay(500)
         audio.play()
