@@ -45,6 +45,7 @@ export async function getMetrics() {
 }
 
 export async function getMysqlProfile(userId: string) {
+  console.log("userId", userId)
   const user: any = await getMysqlQueryResult(`select * from users where ID=${userId}`)
   const ret: AppSchema.Profile = {
     "_id": "",

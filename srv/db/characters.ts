@@ -94,6 +94,7 @@ export async function getCharacter(
 export async function getCharacterByCharId(
   id: string
 ): Promise<AppSchema.Character | undefined> {
+  console.log(id)
   const char = await db('character').findOne({ characterId: id })
   return char || undefined
 }

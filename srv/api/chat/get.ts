@@ -102,7 +102,7 @@ export const getChat = handle(async (req) => {
   const testAudioUrl = "https://myhot.ai/uploads/audio/" + character[0].voice_sample
 
   const characterInfo: any = {
-    characterId: character[0].ID,
+    characterId: character[0].ID.toString(),
     name: character[0].fullName,
     persona: {kind: "attributes", attributes: {"personality": moods, "carrer": [resetMysql(character[0].Description)]}},
     sampleChat: "",

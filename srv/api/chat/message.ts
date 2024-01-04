@@ -15,6 +15,8 @@ import { getTokenCounter } from '/srv/tokenize'
 import { getCountVoiceMessages } from '/srv/db/voiceMessages'
 import { getMysqlQueryResult, isWhiteListed } from '/srv/db/client'
 import { addTextMessages, getCountTextMessages } from '/srv/db/textMessages'
+import { getChatByUserAndChar } from '/srv/db/chats'
+import { getCharacterByCharId } from '/srv/db/characters'
 
 type GenRequest = UnwrapBody<typeof genValidator>
 
@@ -77,6 +79,35 @@ export const countVoiceMessages = handle(async (req) => {
   return {count}
 })
 
+export const countCredits = handle(async (req, res) => {
+  let totalTextCredit: number, consumedTextCredit: number, totalVoiceCredit: number, consumedVoiceCredit: number;
+  const userId: any = req.query.userId
+  const charId: any = req.query.characterId
+  let query = `SELECT SUM(text_tokens) as text_credit, SUM(voice_tokens) as voice_credit FROM credits where userId=${userId} and characterId=${charId};`;
+  const creditRes: any = await getMysqlQueryResult(query);
+  if (creditRes.length > 0) {
+    totalTextCredit = creditRes[0].text_credit;
+    totalVoiceCredit = creditRes[0].voice_credit;
+  } else {
+    totalTextCredit = 0;
+    totalVoiceCredit = 0;
+  }
+  const char: any = await getCharacterByCharId(charId)
+  const chat = await getChatByUserAndChar(userId, char._id)
+  console.log(chat)
+  if (!chat) {
+    return res.json({
+      totalTextCredit, consumedTextCredit: 0, totalVoiceCredit, consumedVoiceCredit: 0
+    })
+  } else {
+    consumedVoiceCredit = await getCountVoiceMessages(chat._id);
+    consumedTextCredit = await getCountTextMessages(chat._id);
+    return res.json({
+      totalTextCredit, consumedTextCredit, totalVoiceCredit, consumedVoiceCredit
+    })
+  }
+
+})
 
 export const generateMessageV2 = handle(async (req, res) => {
   const { body, params, log } = req

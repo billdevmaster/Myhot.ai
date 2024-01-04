@@ -6,6 +6,7 @@ import { useParams } from '@solidjs/router'
 import { api } from "/web/store/api"
 import { setAuth } from "/web/store/api"
 import { toastStore } from "/web/store"
+import { userStore } from "/web/store"
 
 const Pending = () => {
   const params = useParams()
@@ -19,6 +20,7 @@ const Pending = () => {
         toastStore.error(res.result.msg)
       }
     }
+    userStore.logout()
     getChat();
   })
 
